@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'pages/home.dart';
+import 'pages/leaderboards.dart';
+import 'pages/manual.dart';
+import 'pages/settings.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -8,14 +11,17 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
+  // The Material App is the mothering App. Ig this is where u
+  // put the routes as well.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 50, 1, 1)),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Home Page'),
     );
   }
 }
@@ -28,57 +34,94 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// Any identifier (variable, method, or class) that starts with _ 
+// Any identifier (variable, method, or class) that starts with _
 // is accessible only within the same Dart file.
-class _MyHomePageState extends State<MyHomePage> { // Similar to React's component. This 
-  int _counter = 0;
+class _MyHomePageState extends State<MyHomePage> {
 
-  void _incrementCounter() {
+
+  final List<Widget> _sections = [
+    Home(),
+    Manual(),
+    Leaderboards(),
+    Settings()
+  ];
+  int _selectedNav = 0;
+
+  void _changeNav (currentNav) {
     setState(() {
-      _counter++;
+      _selectedNav = currentNav;
     });
   }
 
   @override
-  Widget build(BuildContext context) { // Reruns everytime
-    
+  Widget build(BuildContext context) {
+    // Reruns everytime
+
     return Scaffold(
+      
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        backgroundColor: Color.fromRGBO(131, 12, 12, 1),
+        leading: Image.asset(
+          'assets/images/bsuniverse_logo.png'
         ),
+        
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _sections[_selectedNav],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromRGBO(131, 12, 12, 1),
+        currentIndex: _selectedNav, 
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Color.fromARGB(223, 255, 255, 255),
+        unselectedItemColor: Color.fromARGB(255, 236, 236, 236),
+        showUnselectedLabels: false,
+        onTap: _changeNav,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(size:30,Icons.home_outlined),
+            label: 'Home',
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Icon(Icons.home, size: 40),
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(size:30,Icons.book_outlined),
+            label: 'Manual',
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Icon(Icons.book, size: 40),
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(size:30,Icons.leaderboard_outlined),
+            label: 'Leaderboards',
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Icon(Icons.leaderboard, size: 40),
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(size:30,Icons.settings_outlined),
+            label: 'Settings',
+            activeIcon: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Icon(Icons.settings, size: 40),
+              ),
+            ),
+          ),
+        ]
+      ),
     );
   }
 }

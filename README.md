@@ -14,3 +14,6 @@ Bsu-niverse is a 2D-role playing game which is kinda similar to pokemon. This ga
 ---------------------------------------------
 **For flutter installation just check the docs.**
 - 
+- Flutter's made up of widgets
+- Stateless widget is used when you want the page not to refresh : Static
+- Stateful widget is on the other side is for changing / refreshing (ano to inumen) content
