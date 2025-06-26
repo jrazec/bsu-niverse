@@ -62,12 +62,37 @@ flutter:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   assets:
-    - assets/images/bsuniverse_logo.png
-
+    - assets/images/
   fonts:
     - family: OrangeKid
       fonts:
         - asset: assets/fonts/orange_kid.otf
+
+    - family: FiraCode
+      fonts:
+        - asset: assets/fonts/SubFonts/Fira_Code/FiraCode-VariableFont_wght.ttf
+
+    - family: PressStart2P
+      fonts:
+        - asset: assets/fonts/SubFonts/Press_Start_2P/PressStart2P-Regular.ttf
+
+    - family: VT323
+      fonts:
+        - asset: assets/fonts/SubFonts/VT323/VT323-Regular.ttf
+
+    - family: PixeloidSans
+      fonts:
+        - asset: assets/fonts/pixeloid_sans/PixeloidSans.ttf
+
+    - family: PixeloidSans-Bold
+      fonts:
+        - asset: assets/fonts/pixeloid_sans/PixeloidSans-Bold.ttf
+
+    - family: PixelOperator
+      fonts:
+        - asset: assets/fonts/pixel_operator/PixelOperator-Bold.ttf
+    
+    
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -3,9 +3,19 @@ import 'pages/home.dart';
 import 'pages/leaderboards.dart';
 import 'pages/manual.dart';
 import 'pages/settings.dart';
+import '../widgets/game_title.dart';
+import '../widgets/loading_screen.dart';
+
 void main() {
   runApp(const MyApp());
 }
+
+final Color championWhite = Color.fromRGBO(250, 249, 246, 1.0);
+final Color pixelGold = Color.fromRGBO(255, 215, 0, 1.0);
+final Color lavanderGray = Color.fromRGBO(197, 197, 214, 1.0);
+final Color blazingOrange = Color.fromRGBO(255, 106, 0, 1.0);
+final Color charcoalBlack = Color.fromRGBO(27, 27, 27, 1.0);
+final Color ashMaroon = Color.fromRGBO(110, 14, 21, 1.0);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,9 +29,18 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 50, 1, 1)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 50, 1, 1),
+        ),
       ),
       home: const MyHomePage(title: 'Home Page'),
+      routes: {
+        '/home' : (context) =>Home(),
+        '/user-manual' : (context) => Manual(),
+        '/leaderboards' : (context) => Leaderboards(),
+        '/settings' : (context) => Settings(),
+        '/loading' : (context) => SpartanLoadingScreen()
+      },
     );
   }
 }
@@ -37,20 +56,14 @@ class MyHomePage extends StatefulWidget {
 // Any identifier (variable, method, or class) that starts with _
 // is accessible only within the same Dart file.
 class _MyHomePageState extends State<MyHomePage> {
+  final List<Widget> _sections = [Home(), Manual(), Leaderboards(), Settings()];
+  int _selectedNav = 1;
 
-
-  final List<Widget> _sections = [
-    Home(),
-    Manual(),
-    Leaderboards(),
-    Settings()
-  ];
-  int _selectedNav = 0;
-
-  void _changeNav (currentNav) {
+  void _changeNav(currentNav) {
     setState(() {
       _selectedNav = currentNav;
     });
+    
   }
 
   @override
@@ -58,37 +71,65 @@ class _MyHomePageState extends State<MyHomePage> {
     // Reruns everytime
 
     return Scaffold(
-      
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(131, 12, 12, 1),
-        leading: Image.asset(
-          'assets/images/bsuniverse_logo.png'
+        backgroundColor: const Color.fromRGBO(131, 12, 12, 1), // Deep red
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: Image.asset(
+            'assets/images/bsuniverse_logo.png',
+            height: 32,
+            width: 32,
+            fit: BoxFit.contain,
+          ),
         ),
-        
+        title: GameTitle(
+          fontSizeInput: 22,
+          fontWeightInput: FontWeight.w400,
+          colorInput: championWhite
+        ),
+        centerTitle: false,
+        elevation: 4,
+        shadowColor: Colors.black54,
       ),
+
+      
       body: _sections[_selectedNav],
+
+
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromRGBO(131, 12, 12, 1),
-        currentIndex: _selectedNav, 
+        backgroundColor: ashMaroon,
+        currentIndex: _selectedNav,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Color.fromARGB(223, 255, 255, 255),
-        unselectedItemColor: Color.fromARGB(255, 236, 236, 236),
+        selectedItemColor: pixelGold,
+        unselectedItemColor: championWhite,
         showUnselectedLabels: false,
         onTap: _changeNav,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(size:30,Icons.home_outlined),
+            icon: Icon(size: 30, Icons.home_outlined),
             label: 'Home',
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
-                child: Icon(Icons.home, size: 40),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.2),
+                        blurRadius: 30,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  child: Icon(Icons.home, size: 40),
+                ),
               ),
             ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(size:30,Icons.book_outlined),
+            icon: Icon(size: 30, Icons.book_outlined),
             label: 'Manual',
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 6.0),
@@ -99,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(size:30,Icons.leaderboard_outlined),
+            icon: Icon(size: 30, Icons.leaderboard_outlined),
             label: 'Leaderboards',
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 6.0),
@@ -110,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: Icon(size:30,Icons.settings_outlined),
+            icon: Icon(size: 30, Icons.settings_outlined),
             label: 'Settings',
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 6.0),
@@ -120,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-        ]
+        ],
       ),
     );
   }
