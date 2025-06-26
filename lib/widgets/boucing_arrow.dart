@@ -40,7 +40,7 @@ class _BouncingArrowState extends State<BouncingArrow> with SingleTickerProvider
           child: const Icon(
             Icons.arrow_drop_down_rounded,
             color: Colors.white,
-            size: 50.0,
+            size: 60.0,
           ),
         );
       },
