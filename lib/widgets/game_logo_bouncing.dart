@@ -35,10 +35,10 @@ class _SpartanLogoState extends State<SpartanLogo>
         final scale = 1.0 + 0.05 * glowStrength;
 
         final glowShadows = [
-          [255, 255, 255, 0.45, 50.0, -20.0],   // White
-          [255, 215, 0,    0.35, 80.0, -5.0],   // Yellow
+          [0, 0, 0, 1.0, 200.0, 10.0],   // BLUCK
+          [255, 255, 255, 0.9, 70.0, -20.0],   // White
           [255, 106, 0,    0.35, 100.0, -10.0], // Orange
-          [201, 33, 30,    0.35, 150.0, 10.0],  // Red
+          [201, 33, 30,    0.55, 150.0, 10.0],  // Red
         ].map((data) {
           return BoxShadow(
             color: Color.fromRGBO(
