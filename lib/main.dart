@@ -6,7 +6,15 @@ import 'pages/settings.dart';
 import '../widgets/game_title.dart';
 import '../widgets/loading_screen.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+
+void main() async{
+    WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -57,7 +65,7 @@ class MyHomePage extends StatefulWidget {
 // is accessible only within the same Dart file.
 class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _sections = [Home(), Manual(), Leaderboards(), Settings()];
-  int _selectedNav = 1;
+  int _selectedNav = 0;
 
   void _changeNav(currentNav) {
     setState(() {
@@ -103,6 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedItemColor: pixelGold,
         unselectedItemColor: championWhite,
         showUnselectedLabels: false,
+        selectedLabelStyle: TextStyle(
+          fontFamily: 'PixeloidSans',
+          fontSize: 13
+        ),
         onTap: _changeNav,
         items: [
           BottomNavigationBarItem(
@@ -123,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ],
                   ),
-                  child: Icon(Icons.home, size: 40),
+                  child: Icon(Icons.home, size: 35),
                 ),
               ),
             ),
@@ -135,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
-                child: Icon(Icons.book, size: 40),
+                child: Icon(Icons.book, size: 35),
               ),
             ),
           ),
@@ -146,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
-                child: Icon(Icons.leaderboard, size: 40),
+                child: Icon(Icons.leaderboard, size: 35),
               ),
             ),
           ),
@@ -157,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.topCenter,
-                child: Icon(Icons.settings, size: 40),
+                child: Icon(Icons.settings, size: 35),
               ),
             ),
           ),
