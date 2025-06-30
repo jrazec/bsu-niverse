@@ -7,38 +7,42 @@ import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
-class RoomScene extends FlameGame with HasCollisionDetection, HasGameReference<BSUniverseGame> {
+class RoomScene extends World with HasCollisionDetection {
   late PlayerComponent player;
   final JoystickComponent joystickComponent;
   late SpriteSheet mapComponent;
   late Viewport viewport;
   late CameraComponent cameraComponent;
+  late TiledComponent map;
+
 
   RoomScene(this.joystickComponent);
+
+  Future<void> loadMap() async {
+    map = await TiledComponent.load(
+      'bsu-map.tmx',
+      Vector2(32, 32),
+      priority: -1,
+    );
+    add(map);
+  }
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     joystickComponent.priority = 10;
-
-    // Load the Tiled map
-    final map = await TiledComponent.load(
-      'bsu-map.tmx',
-      Vector2(32, 32),
-      priority: -1,
-    );
-    map.anchor = Anchor.center;
-    add(map);
+    await loadMap();
 
     final collisions = map.tileMap.getLayer<ObjectGroup>('Collisions');
     if (collisions != null) {
       for (final obj in collisions.objects) {
         map.add(
           WallComponent(Vector2(obj.x, obj.y), Vector2(obj.width, obj.height))
-            ..debugMode = true,
+
         );
       }
     }
+
   }
 
   @override
