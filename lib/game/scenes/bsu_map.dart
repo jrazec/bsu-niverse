@@ -1,4 +1,3 @@
-import 'package:bsuniverse/game/bsuniverse.dart';
 import 'package:bsuniverse/game/components/player_component.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
 import 'package:flame/components.dart';
@@ -7,7 +6,7 @@ import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
-class RoomScene extends World with HasCollisionDetection {
+class CampusMap extends World with HasCollisionDetection {
   late PlayerComponent player;
   final JoystickComponent joystickComponent;
   late SpriteSheet mapComponent;
@@ -16,11 +15,16 @@ class RoomScene extends World with HasCollisionDetection {
   late TiledComponent map;
 
 
-  RoomScene(this.joystickComponent);
+  CampusMap(this.joystickComponent);
 
   Future<void> loadMap() async {
+    // map = await TiledComponent.load(
+    //   'bsu-map.tmx',
+    //   Vector2(32, 32),
+    //   priority: -1,
+    // );
     map = await TiledComponent.load(
-      'bsu-map.tmx',
+      'old_building.tmx',
       Vector2(32, 32),
       priority: -1,
     );
@@ -38,7 +42,6 @@ class RoomScene extends World with HasCollisionDetection {
       for (final obj in collisions.objects) {
         map.add(
           WallComponent(Vector2(obj.x, obj.y), Vector2(obj.width, obj.height))
-
         );
       }
     }

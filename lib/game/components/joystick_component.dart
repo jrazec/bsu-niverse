@@ -31,12 +31,13 @@ class _InteractiveJoystick extends JoystickComponent {
   }) : super(
           knob: SpriteComponent(
             sprite: spriteIdle,
-            size: Vector2.all(100),
+            size: Vector2.all(80),
             
           ),
           background: SpriteComponent(
             sprite: backgroundSprite,
             size: Vector2.all(120),
+            paint: Paint()..color = backgroundSprite.paint.color.withAlpha(70),
           ),
           margin: const EdgeInsets.only(left: 60, bottom: 60),
           priority: 100,
@@ -54,7 +55,7 @@ class _InteractiveJoystick extends JoystickComponent {
       final knobSprite = (knob as SpriteComponent);
       knobSprite
         ..sprite = isDragging ? spriteActive : spriteIdle
-        ..size = Vector2.all(isDragging ? 100 : 120); // Slight size change
+        ..size = Vector2.all(isDragging ? 100 : 80); // Slight size change
     }
   }
 }
