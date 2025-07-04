@@ -18,13 +18,8 @@ class CampusMap extends World with HasCollisionDetection {
   CampusMap(this.joystickComponent);
 
   Future<void> loadMap() async {
-    // map = await TiledComponent.load(
-    //   'bsu-map.tmx',
-    //   Vector2(32, 32),
-    //   priority: -1,
-    // );
     map = await TiledComponent.load(
-      'old_building.tmx',
+      'bsu-map.tmx',
       Vector2(32, 32),
       priority: -1,
     );
