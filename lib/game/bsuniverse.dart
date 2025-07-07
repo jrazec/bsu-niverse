@@ -8,6 +8,7 @@ import 'package:flame/game.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'scenes/bsu_map.dart';
 
@@ -32,6 +33,8 @@ class BSUniverseGame extends FlameGame with HasCollisionDetection, HasKeyboardHa
   // GZB 57 x 39
   final double mapHeight = 39 * 32;
   final double mapWidth = 57 * 32;
+
+  bool isQuestActive = false;
 
   @override
   void onGameResize(Vector2 canvasSize) async {
@@ -169,11 +172,31 @@ class BSUniverseGame extends FlameGame with HasCollisionDetection, HasKeyboardHa
 
   @override
   void update(double dt) async {
+    if (isQuestActive) return; // Pause game update when quest is active
     super.update(dt);
     if (initialized) {
       camera.viewfinder.position.round();
       player.setDirection(joystick.relativeDelta);
       camera.renderContext;
     }
+  }
+
+  void showQuestOverlay() {
+    overlays.add('QuestOverlay');
+    isQuestActive = true;
+  }
+
+  void hideQuestOverlay() {
+    overlays.remove('QuestOverlay');
+    isQuestActive = false;
+  }
+
+  @override
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyQ) {
+      showQuestOverlay();
+      return KeyEventResult.handled;
+    }
+    return super.onKeyEvent(event, keysPressed);
   }
 }
