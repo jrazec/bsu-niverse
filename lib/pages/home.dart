@@ -90,10 +90,11 @@ class _HomeState extends State<Home> {
                               shadowColor: charcoalBlack,
                             ),
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) => const LoginModal(),
-                              );
+                              Navigator.pushNamed(context, '/game');
+                              // showDialog(
+                              //   context: context,
+                              //   builder: (context) => const LoginModal(),
+                              // );
                             },
                             child: Text(
                               "PLAY NOW",

@@ -364,7 +364,7 @@ class PlayerComponent extends SpriteAnimationComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is WallComponent) {
+    if (other is Collision) {
       // Attempt sliding: only block movement along the colliding axis
       Vector2 delta = attemptedPosition - previousPosition;
 

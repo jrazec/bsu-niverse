@@ -3,7 +3,7 @@
  <tileset firstgid="1" source="hallway.tsx"/>
  <tileset firstgid="157" source="map.tsx"/>
  <tileset firstgid="285" source="test.tsx"/>
- <tileset firstgid="286" source="../../../../../../Downloads/hallway-tileseta.tsx"/>
+ <tileset firstgid="286" source="hallway.tsx"/>
  <group id="7" name="LDC">
   <layer id="84" name="floors" width="57" height="39">
    <data encoding="csv">
