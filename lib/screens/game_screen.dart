@@ -16,8 +16,9 @@ class GameScreen extends StatelessWidget {
               game: game,
               question: 'What is the capital of the Philippines?',
               options: ['Manila', 'Cebu', 'Davao', 'Quezon City'],
+              hearts: 3, // Start with 3 hearts
               onOptionSelected: (index) {
-                (game as BSUniverseGame).hideQuestOverlay();
+                game.hideQuestOverlay();
               },
             ),
         // We'll add inventory and pause overlays later
