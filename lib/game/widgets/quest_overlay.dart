@@ -168,12 +168,13 @@ class _SpriteFramePainter extends CustomPainter {
 }
 
 
-class QuestOverlay extends StatelessWidget {
+class QuestOverlay extends StatefulWidget {
   final FlameGame game;
   final String question;
   final List<String> options;
-  final void Function(int) onOptionSelected;
-  final int hearts; // Number of hearts remaining
+  final void Function(int, bool) onOptionSelected; // Added bool for correct/incorrect
+  final int correctAnswerIndex; // Index of the correct answer
+  final int initialHearts; // Initial hearts count
   
 
   const QuestOverlay({
@@ -182,8 +183,40 @@ class QuestOverlay extends StatelessWidget {
     required this.question,
     required this.options,
     required this.onOptionSelected,
-    this.hearts = 3,
+    required this.correctAnswerIndex,
+    this.initialHearts = 3,
   }) : super(key: key);
+
+  @override
+  State<QuestOverlay> createState() => _QuestOverlayState();
+}
+
+class _QuestOverlayState extends State<QuestOverlay> {
+  late int hearts;
+
+  @override
+  void initState() {
+    super.initState();
+    hearts = widget.initialHearts;
+  }
+
+  void _handleOptionSelected(int index) {
+    if (index == widget.correctAnswerIndex) {
+      // Correct answer - quest completed
+      widget.onOptionSelected(index, true);
+    } else {
+      // Wrong answer - lose a heart
+      setState(() {
+        hearts--;
+      });
+      
+      if (hearts <= 0) {
+        // No hearts left - quest failed
+        widget.onOptionSelected(index, false);
+      }
+      // If hearts > 0, continue with the quest (don't close overlay)
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +294,7 @@ class QuestOverlay extends StatelessWidget {
               width: npcWidth,
               height: npcHeight,
               child: FlameImageWidget(
-                game: game,
+                game: widget.game,
                 imagePath: 'sirt.png',
                 width: npcWidth,
                 height: npcHeight,
@@ -277,7 +310,7 @@ class QuestOverlay extends StatelessWidget {
               width: playerWidth,
               height: playerHeight,
               child: SpriteFrameWidget(
-                game: game,
+                game: widget.game,
                 imagePath: 'boy_pe.png',
                 frameIndex: 3, // Frame 3 shows character facing back
                 width: playerWidth,
@@ -322,7 +355,7 @@ class QuestOverlay extends StatelessWidget {
                       border: Border.all(color: Colors.grey[400]!, width: 2),
                     ),
                     child: Text(
-                      question,
+                      widget.question,
                       style: TextStyle(
                         fontFamily: 'VT323',
                         fontSize: isLandscape ? 16 : 18,
@@ -341,7 +374,7 @@ class QuestOverlay extends StatelessWidget {
                     crossAxisSpacing: isLandscape ? 6 : 8,
                     childAspectRatio: isLandscape ? 10.5 : 3.5,
                     physics: NeverScrollableScrollPhysics(),
-                    children: List.generate(options.length, (index) {
+                    children: List.generate(widget.options.length, (index) {
                       return Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black, width: 2),
@@ -366,9 +399,9 @@ class QuestOverlay extends StatelessWidget {
                             ),
                             elevation: 0,
                           ),
-                          onPressed: () => onOptionSelected(index),
+                          onPressed: () => _handleOptionSelected(index),
                           child: Text(
-                            options[index],
+                            widget.options[index],
                             style: TextStyle(
                               fontFamily: 'VT323',
                               fontSize: isLandscape ? 14 : 16,
@@ -386,6 +419,136 @@ class QuestOverlay extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// Quest Result Overlay for showing completion/failure messages
+class QuestResultOverlay extends StatefulWidget {
+  final bool isSuccess;
+  final VoidCallback onDismiss;
+
+  const QuestResultOverlay({
+    Key? key,
+    required this.isSuccess,
+    required this.onDismiss,
+  }) : super(key: key);
+
+  @override
+  State<QuestResultOverlay> createState() => _QuestResultOverlayState();
+}
+
+class _QuestResultOverlayState extends State<QuestResultOverlay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2500),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.0, 0.3, curve: Curves.elasticOut),
+    ));
+
+    _fadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0.7, 1.0, curve: Curves.easeInOut),
+    ));
+
+    _controller.forward().then((_) {
+      widget.onDismiss();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black.withOpacity(0.3 * _fadeAnimation.value),
+          child: Center(
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Opacity(
+                opacity: _fadeAnimation.value,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 20,
+                  ),
+                  decoration: BoxDecoration(
+                    color: widget.isSuccess ? Colors.green : Colors.red,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        widget.isSuccess ? Icons.check_circle : Icons.cancel,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        widget.isSuccess ? 'QUEST COMPLETED!' : 'QUEST FAILED!',
+                        style: const TextStyle(
+                          fontFamily: 'VT323',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (!widget.isSuccess) ...[
+                        const SizedBox(height: 8),
+                        const Text(
+                          'No hearts remaining',
+                          style: TextStyle(
+                            fontFamily: 'VT323',
+                            fontSize: 16,
+                            color: Colors.white70,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

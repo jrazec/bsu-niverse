@@ -3,12 +3,39 @@ import 'package:flame/game.dart';
 import '../game/bsuniverse.dart';
 import '../game/widgets/quest_overlay.dart';
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
   @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  late BSUniverseGame game;
+
+  @override
+  void initState() {
+    super.initState();
+    game = BSUniverseGame();
+  }
+
+  void _handleQuestResult(int selectedIndex, bool isCorrect) {
+    // Hide the quest overlay first
+    game.hideQuestOverlay();
+    
+    // Show the result overlay after a brief delay
+    Future.delayed(const Duration(milliseconds: 300), () {
+      game.showQuestResultOverlay(isCorrect);
+      
+      // Auto-hide the result overlay after a few seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        game.hideQuestResultOverlay();
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final game = BSUniverseGame();
     return GameWidget<BSUniverseGame>(
       game: game,
       overlayBuilderMap: {
@@ -16,12 +43,18 @@ class GameScreen extends StatelessWidget {
               game: game,
               question: 'What is the capital of the Philippines?',
               options: ['Manila', 'Cebu', 'Davao', 'Quezon City'],
-              hearts: 3, // Start with 3 hearts
-              onOptionSelected: (index) {
-                game.hideQuestOverlay();
-              },
+              correctAnswerIndex: 0, // Manila is the correct answer
+              initialHearts: 3,
+              onOptionSelected: _handleQuestResult,
             ),
-        // We'll add inventory and pause overlays later
+        'QuestCompleted': (context, game) => QuestResultOverlay(
+              isSuccess: true,
+              onDismiss: () => game.hideQuestResultOverlay(),
+            ),
+        'QuestFailed': (context, game) => QuestResultOverlay(
+              isSuccess: false,
+              onDismiss: () => game.hideQuestResultOverlay(),
+            ),
       },
       initialActiveOverlays: const [],
     );

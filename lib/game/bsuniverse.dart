@@ -191,6 +191,16 @@ class BSUniverseGame extends FlameGame with HasCollisionDetection, HasKeyboardHa
     isQuestActive = false;
   }
 
+  // Quest state management
+  void showQuestResultOverlay(bool isSuccess) {
+    overlays.add(isSuccess ? 'QuestCompleted' : 'QuestFailed');
+  }
+  
+  void hideQuestResultOverlay() {
+    overlays.remove('QuestCompleted');
+    overlays.remove('QuestFailed');
+  }
+
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyQ) {
