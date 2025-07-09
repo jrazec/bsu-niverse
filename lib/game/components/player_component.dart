@@ -2,6 +2,7 @@ import 'package:bsuniverse/game/bsuniverse.dart';
 import 'package:bsuniverse/game/components/button_components.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
+import 'package:bsuniverse/game/widgets/quest_overlay.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -176,6 +177,25 @@ class PlayerComponent extends SpriteAnimationComponent
 
   bool _loadedAnimations = false;
 
+  // Current sprite configuration - this will be set when sprites are loaded
+  String currentSpriteSheet = 'boy_uniform.png'; // Default, but will be dynamic
+  
+  // Method to get the current player sprite configuration for quest overlay
+  PlayerSpriteConfig getCurrentSpriteConfig() {
+    return PlayerSpriteConfig(
+      imagePath: currentSpriteSheet,
+      frameIndex: 3, // Frame 3 is always the dialogue/back-facing frame
+      isSpriteSheet: true,
+    );
+  }
+  
+  // Method to change the player's sprite sheet (for future outfit system)
+  Future<void> changeSpriteSheet(String newSpriteSheet) async {
+    currentSpriteSheet = newSpriteSheet;
+    _loadedAnimations = false; // Force reload animations
+    await onLoad(); // Reload with new sprite sheet
+  }
+
   // Powerup objects
   late final RunPowerupEffect runPowerup;
   late final TitanPowerupEffect titanPowerup;
@@ -189,7 +209,7 @@ class PlayerComponent extends SpriteAnimationComponent
     if (_loadedAnimations) return;
 
     // SPRITESHEETS TO USE
-    final spriteSheet = await game.images.load('boy_pe.png');
+    final spriteSheet = await game.images.load(currentSpriteSheet);
     final run = await game.images.load('run.png');
     final titan = await game.images.load('titan.png');
     final flicker = await game.images.load('run.png');

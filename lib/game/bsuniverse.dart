@@ -3,6 +3,7 @@ import 'package:bsuniverse/game/components/player_component.dart';
 import 'package:bsuniverse/game/components/button_components.dart';
 import 'package:bsuniverse/game/components/mute_button_component.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
+import 'package:bsuniverse/game/widgets/quest_overlay.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/experimental.dart';
@@ -200,7 +201,55 @@ class BSUniverseGame extends FlameGame with HasCollisionDetection, HasKeyboardHa
     overlays.remove('QuestCompleted');
     overlays.remove('QuestFailed');
   }
-
+  
+  // Player sprite configuration - now gets it from the actual player component
+  PlayerSpriteConfig getCurrentPlayerSprite() {
+    // Get the sprite configuration from the actual player component
+    return player.getCurrentSpriteConfig();
+  }
+  
+  // NPC sprite configuration - to be updated when NPC interaction system is implemented
+  NPCSpriteConfig getCurrentNPCSprite() {
+    // TODO: Replace with actual NPC that the player is interacting with
+    // For now, return default NPC sprite
+    return NPCSpriteConfig.sirtNPC;
+  }
+  
+  // Method to change player outfit (now functional!)
+  Future<void> changePlayerOutfit(String spriteSheetName) async {
+    await player.changeSpriteSheet(spriteSheetName);
+  }
+  
+  // Examples of how to use the dynamic outfit system:
+  // await game.changePlayerOutfit('boy_uniform.png');  // School uniform
+  // await game.changePlayerOutfit('boy_pe.png');       // PE uniform  
+  // await game.changePlayerOutfit('boy_casual.png');   // Casual clothes
+  // The quest overlay will automatically show the correct sprite!
+  
+  // Example methods for future implementation:
+  
+  // Method to start quest with specific NPC (to be implemented with NPC system)
+  // void startQuestWithNPC(String npcId, String question, List<String> options, int correctAnswer) {
+  //   // Get NPC sprite configuration based on npcId
+  //   NPCSpriteConfig npcConfig;
+  //   switch (npcId) {
+  //     case 'teacher':
+  //       npcConfig = NPCSpriteConfig.teacherNPC;
+  //       break;
+  //     case 'student':
+  //       npcConfig = NPCSpriteConfig.studentNPC;
+  //       break;
+  //     case 'janitor':
+  //       npcConfig = NPCSpriteConfig.janitorNPC;
+  //       break;
+  //     default:
+  //       npcConfig = NPCSpriteConfig.sirtNPC;
+  //   }
+  //   
+  //   // Show quest overlay with the specific NPC and current player sprite
+  //   showQuestOverlay();
+  // }
+  
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyQ) {

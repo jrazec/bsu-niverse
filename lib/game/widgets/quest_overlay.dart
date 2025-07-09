@@ -2,6 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'dart:ui' as ui;
 
+/// Quest Overlay System with Configurable Sprites
+/// 
+/// This system allows easy configuration of player and NPC sprites in quest dialogs.
+/// 
+/// Usage Examples:
+/// 
+/// 1. For sprite sheet characters (like player):
+///    PlayerSpriteConfig(
+///      imagePath: 'player_spritesheet.png',
+///      frameIndex: 3, // Frame number for dialogue pose
+///      isSpriteSheet: true,
+///    )
+/// 
+/// 2. For single image NPCs:
+///    NPCSpriteConfig(
+///      imagePath: 'npc_image.png',
+///      isSpriteSheet: false,
+///    )
+/// 
+/// 3. For sprite sheet NPCs:
+///    NPCSpriteConfig(
+///      imagePath: 'npc_spritesheet.png',
+///      frameIndex: 0, // Frame number for standing pose
+///      isSpriteSheet: true,
+///    )
+/// 
+/// Future Implementation:
+/// - Connect to player outfit system by updating getCurrentPlayerSprite()
+/// - Connect to NPC interaction system by updating getCurrentNPCSprite()
+/// - Add dynamic quest parameters based on interacted NPC
+
 // Custom widget to render a full image (for NPCs that are single images, not sprite sheets)
 class FlameImageWidget extends StatelessWidget {
   final FlameGame game;
@@ -168,6 +199,38 @@ class _SpriteFramePainter extends CustomPainter {
 }
 
 
+// Configuration class for player sprite data
+class PlayerSpriteConfig {
+  final String imagePath;
+  final int frameIndex;
+  final bool isSpriteSheet;
+
+  const PlayerSpriteConfig({
+    required this.imagePath,
+    required this.frameIndex,
+    this.isSpriteSheet = true,
+  });
+}
+
+// Configuration class for NPC sprite data
+class NPCSpriteConfig {
+  final String imagePath;
+  final bool isSpriteSheet;
+  final int frameIndex; // Only used if isSpriteSheet is true
+
+  const NPCSpriteConfig({
+    required this.imagePath,
+    this.isSpriteSheet = false,
+    this.frameIndex = 0,
+  });
+  
+  // Current NPC configuration (referenced in BSUniverseGame)
+  static const NPCSpriteConfig sirtNPC = NPCSpriteConfig(
+    imagePath: 'sirt.png',
+    isSpriteSheet: false,
+  );
+}
+
 class QuestOverlay extends StatefulWidget {
   final FlameGame game;
   final String question;
@@ -175,6 +238,8 @@ class QuestOverlay extends StatefulWidget {
   final void Function(int, bool) onOptionSelected; // Added bool for correct/incorrect
   final int correctAnswerIndex; // Index of the correct answer
   final int initialHearts; // Initial hearts count
+  final PlayerSpriteConfig playerSprite; // Player sprite configuration
+  final NPCSpriteConfig npcSprite; // NPC sprite configuration
   
 
   const QuestOverlay({
@@ -184,6 +249,8 @@ class QuestOverlay extends StatefulWidget {
     required this.options,
     required this.onOptionSelected,
     required this.correctAnswerIndex,
+    required this.playerSprite,
+    required this.npcSprite,
     this.initialHearts = 3,
   }) : super(key: key);
 
@@ -293,12 +360,20 @@ class _QuestOverlayState extends State<QuestOverlay> {
             child: Container(
               width: npcWidth,
               height: npcHeight,
-              child: FlameImageWidget(
-                game: widget.game,
-                imagePath: 'sirt.png',
-                width: npcWidth,
-                height: npcHeight,
-              ),
+              child: widget.npcSprite.isSpriteSheet
+                  ? SpriteFrameWidget(
+                      game: widget.game,
+                      imagePath: widget.npcSprite.imagePath,
+                      frameIndex: widget.npcSprite.frameIndex,
+                      width: npcWidth,
+                      height: npcHeight,
+                    )
+                  : FlameImageWidget(
+                      game: widget.game,
+                      imagePath: widget.npcSprite.imagePath,
+                      width: npcWidth,
+                      height: npcHeight,
+                    ),
             ),
           ),
           
@@ -309,13 +384,20 @@ class _QuestOverlayState extends State<QuestOverlay> {
             child: Container(
               width: playerWidth,
               height: playerHeight,
-              child: SpriteFrameWidget(
-                game: widget.game,
-                imagePath: 'boy_pe.png',
-                frameIndex: 3, // Frame 3 shows character facing back
-                width: playerWidth,
-                height: playerHeight,
-              ),
+              child: widget.playerSprite.isSpriteSheet
+                  ? SpriteFrameWidget(
+                      game: widget.game,
+                      imagePath: widget.playerSprite.imagePath,
+                      frameIndex: widget.playerSprite.frameIndex,
+                      width: playerWidth,
+                      height: playerHeight,
+                    )
+                  : FlameImageWidget(
+                      game: widget.game,
+                      imagePath: widget.playerSprite.imagePath,
+                      width: playerWidth,
+                      height: playerHeight,
+                    ),
             ),
           ),
           

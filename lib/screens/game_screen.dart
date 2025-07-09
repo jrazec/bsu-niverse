@@ -46,6 +46,9 @@ class _GameScreenState extends State<GameScreen> {
               correctAnswerIndex: 0, // Manila is the correct answer
               initialHearts: 3,
               onOptionSelected: _handleQuestResult,
+              // Use helper methods to get current sprite configurations
+              playerSprite: game.getCurrentPlayerSprite(),
+              npcSprite: game.getCurrentNPCSprite(),
             ),
         'QuestCompleted': (context, game) => QuestResultOverlay(
               isSuccess: true,
