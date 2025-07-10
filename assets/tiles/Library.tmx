@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="17" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="43">
+ <tileset firstgid="1" source="libr.tsx"/>
+ <tileset firstgid="66" source="test.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="17" height="9">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,0,0,
+0,0,14,15,16,17,18,19,20,21,22,23,24,25,26,0,0,
+0,0,27,28,29,30,31,32,33,34,35,36,37,38,39,0,0,
+0,0,40,41,42,43,44,45,46,47,48,49,50,51,52,0,0,
+0,0,53,54,55,56,57,58,59,60,61,62,63,64,65,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Collisions">
+  <object id="22" x="63.5" y="64" width="15.2128" height="85.5"/>
+  <object id="26" x="75.8424" y="64.5833" width="413.03" height="12.9663"/>
+  <object id="27" x="196.042" y="80.25" width="245.583" height="36.8333"/>
+  <object id="29" x="484.652" y="66.482" width="4.31027" height="165.169"/>
+  <object id="30" x="58.4451" y="226.222" width="429.606" height="6.114"/>
+  <object id="31" x="57.9618" y="65.8274" width="4.31027" height="159.614"/>
+  <object id="32" x="380.084" y="162.659" width="52.833" height="17.9318"/>
+  <object id="35" x="206.248" y="162.841" width="54.3444" height="17.9318"/>
+  <object id="36" x="293.72" y="162.671" width="50.0944" height="17.9318"/>
+  <object id="37" x="135.364" y="193.892" width="8.20037" height="29.0734"/>
+ </objectgroup>
+ <objectgroup id="3" name="Popups">
+  <object id="1" name="1" gid="66" x="100.417" y="210.417" width="32" height="32"/>
+  <object id="2" name="1" gid="66" x="91" y="173.667" width="32" height="32"/>
+  <object id="3" name="1" gid="66" x="127.333" y="176" width="32" height="32"/>
+  <object id="4" name="1" gid="66" x="136.173" y="111.98" width="32" height="32"/>
+  <object id="5" name="1" gid="66" x="156" y="171.667" width="32" height="32"/>
+  <object id="6" name="1" gid="66" x="158.167" y="210.083" width="32" height="32"/>
+  <object id="7" name="1" gid="66" x="195.667" y="155.667" width="32" height="32"/>
+  <object id="8" name="1" gid="66" x="235.667" y="152.333" width="32" height="32"/>
+  <object id="9" name="1" gid="66" x="278" y="151" width="32" height="32"/>
+  <object id="10" name="1" gid="66" x="317.333" y="150" width="32" height="32"/>
+  <object id="11" name="1" gid="66" x="354.333" y="149.333" width="32" height="32"/>
+  <object id="12" name="1" gid="66" x="393.583" y="156.792" width="32" height="32"/>
+  <object id="13" name="1" gid="66" x="442.333" y="110.333" width="32" height="32"/>
+  <object id="14" name="1" gid="66" x="444" y="173.333" width="32" height="32"/>
+  <object id="15" name="1" gid="66" x="438" y="217" width="32" height="32"/>
+  <object id="16" name="1" gid="66" x="402.542" y="214.083" width="32" height="32"/>
+  <object id="17" name="1" gid="66" x="367.667" y="214" width="32" height="32"/>
+  <object id="18" name="1" gid="66" x="333.333" y="216" width="32" height="32"/>
+  <object id="19" name="1" gid="66" x="298.667" y="215" width="32" height="32"/>
+  <object id="20" name="1" gid="66" x="257.667" y="214" width="32" height="32"/>
+  <object id="21" name="1" gid="66" x="216.667" y="213.333" width="32" height="32"/>
+  <object id="24" name="1" gid="66" x="70" y="183.25" width="32" height="32"/>
+  <object id="33" name="1" gid="66" x="346.875" y="192.375" width="32" height="32"/>
+  <object id="34" name="1" gid="66" x="261.273" y="188.364" width="32" height="32"/>
+  <object id="40" x="136.333" y="112.333" width="2" height="20.6667"/>
+  <object id="41" x="110.333" y="116.667" width="2" height="14.3333"/>
+  <object id="42" x="99.6667" y="97.3333" width="22.6667" height="3"/>
+ </objectgroup>
+ <objectgroup id="4" name="Spawn">
+  <object id="38" x="96.25" y="193">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="out">
+  <object id="39" x="84.875" y="218.75" width="28.75" height="5.75"/>
+ </objectgroup>
+</map>

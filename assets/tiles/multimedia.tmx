@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="79">
+ <tileset firstgid="1" source="multimedia.tsx"/>
+ <tileset firstgid="46" source="test.tsx"/>
+ <layer id="1" name="multimedia" width="13" height="9">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,3,4,5,6,7,8,9,0,0,
+0,0,10,11,12,13,14,15,16,17,18,0,0,
+0,0,19,20,21,22,23,24,25,26,27,0,0,
+0,0,28,29,30,31,32,33,34,35,36,0,0,
+0,0,37,38,39,40,41,42,43,44,45,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Collisions">
+  <object id="1" x="64" y="225.88" width="288" height="30.1204"/>
+  <object id="2" x="64" y="32" width="288" height="46.3333"/>
+  <object id="3" x="355.506" y="32" width="28.4938" height="224"/>
+  <object id="4" x="32" y="32" width="27.9532" height="224"/>
+  <object id="29" x="125.484" y="64.0075" width="67.2621" height="13.3801"/>
+  <object id="47" x="222.099" y="65.3401" width="67.2621" height="13.3801"/>
+  <object id="33" x="137.056" y="77.7492" width="50.8239" height="8.67899"/>
+  <object id="46" x="226.965" y="79.0819" width="50.8239" height="8.67899"/>
+  <object id="34" x="144.65" y="86.7899" width="42.6717" height="7.23249"/>
+  <object id="45" x="227.523" y="88.1225" width="42.6717" height="7.23249"/>
+  <object id="36" x="148.266" y="94.7456" width="39.2519" height="15.9115"/>
+  <object id="44" x="227.327" y="96.0782" width="39.2519" height="15.9115"/>
+  <object id="37" x="156.583" y="59.5732" width="32.6031" height="55.785"/>
+  <object id="43" x="225.658" y="60.9058" width="32.6031" height="55.785"/>
+  <object id="48" x="312.786" y="175.097" width="41.3864" height="45.7639"/>
+  <object id="52" x="61" y="175.923" width="41.3864" height="45.7639"/>
+  <object id="49" x="320.944" y="168.928" width="29.846" height="5.9692"/>
+  <object id="53" x="64.3825" y="169.755" width="29.846" height="5.9692"/>
+  <object id="50" x="335.668" y="164.352" width="17.1117" height="4.17844"/>
+  <object id="54" x="62.3928" y="165.178" width="17.1117" height="4.17844"/>
+  <object id="51" x="340.443" y="160.174" width="13.1322" height="4.57639"/>
+  <object id="55" x="61.5969" y="161" width="13.1322" height="4.57639"/>
+  <object id="63" x="65.1493" y="76.6947" width="7.42207" height="25.8398"/>
+  <object id="73" x="343.614" y="77.5194" width="7.42207" height="25.8398"/>
+  <object id="67" x="71.7467" y="74.7705" width="4.94805" height="23.6407"/>
+  <object id="74" x="339.491" y="75.5951" width="4.94805" height="23.6407"/>
+  <object id="68" x="76.6947" y="72.5713" width="4.39826" height="20.8917"/>
+  <object id="75" x="335.093" y="73.396" width="4.39826" height="20.8917"/>
+  <object id="69" x="80.8181" y="68.9977" width="4.94805" height="20.342"/>
+  <object id="76" x="330.419" y="69.8224" width="4.94805" height="20.342"/>
+  <object id="71" x="86.041" y="62.6752" width="4.12337" height="23.3658"/>
+  <object id="77" x="326.021" y="63.4999" width="4.12337" height="23.3658"/>
+  <object id="72" x="89.8895" y="61.3008" width="1.92424" height="21.7164"/>
+  <object id="78" x="324.372" y="62.1255" width="1.92424" height="21.7164"/>
+ </objectgroup>
+ <objectgroup id="4" name="out">
+  <object id="5" x="256.792" y="219.212" width="31.5" height="7.125"/>
+ </objectgroup>
+ <objectgroup id="5" name="in">
+  <object id="6" x="128.583" y="218.133" width="31.5" height="7.125"/>
+ </objectgroup>
+ <group id="8" name="Popups">
+  <objectgroup id="3" name="1st">
+   <object id="7" name="11" gid="46" x="192" y="216" width="32" height="32"/>
+   <object id="8" name="10" gid="46" x="280" y="192" width="32" height="32"/>
+   <object id="9" name="9" gid="46" x="104" y="192" width="32" height="32"/>
+   <object id="10" name="8" gid="46" x="192" y="160" width="32" height="32"/>
+   <object id="11" name="7" gid="46" x="224" y="160" width="32" height="32"/>
+   <object id="12" name="6" gid="46" x="160" y="160" width="32" height="32"/>
+   <object id="13" name="5" gid="46" x="128" y="160" width="32" height="32"/>
+   <object id="14" name="4" gid="46" x="256" y="160" width="32" height="32"/>
+   <object id="15" name="3" gid="46" x="288" y="118" width="32" height="32"/>
+   <object id="16" name="2" gid="46" x="96" y="118" width="32" height="32"/>
+   <object id="17" name="1" gid="46" x="192" y="109" width="32" height="32"/>
+  </objectgroup>
+ </group>
+</map>

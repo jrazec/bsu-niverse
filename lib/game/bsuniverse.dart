@@ -3,8 +3,29 @@ import 'package:bsuniverse/game/components/player_component.dart';
 import 'package:bsuniverse/game/components/button_components.dart';
 import 'package:bsuniverse/game/components/mute_button_component.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
-import 'package:bsuniverse/game/scenes/scene.dart';
+import 'package:bsuniverse/game/setup/abb.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
+// Setup imports
+import 'package:bsuniverse/game/setup/facade.dart';
+import 'package:bsuniverse/game/setup/bedroom.dart';
+import 'package:bsuniverse/game/setup/lsb.dart';
+import 'package:bsuniverse/game/setup/map_bsu.dart';
+import 'package:bsuniverse/game/setup/vmb.dart';
+import 'package:bsuniverse/game/setup/gzb.dart';
+import 'package:bsuniverse/game/setup/gymn.dart';
+import 'package:bsuniverse/game/setup/lsb_room.dart';
+import 'package:bsuniverse/game/setup/com_lab_502_lsb.dart';
+import 'package:bsuniverse/game/setup/com_lab_503_lsb.dart';
+import 'package:bsuniverse/game/setup/vmb_room.dart';
+import 'package:bsuniverse/game/setup/com_lab_301_vmb.dart';
+import 'package:bsuniverse/game/setup/com_lab_302_vmb.dart';
+import 'package:bsuniverse/game/setup/multimedia.dart';
+import 'package:bsuniverse/game/setup/gymn_open_area.dart';
+import 'package:bsuniverse/game/setup/gzb_room.dart';
+import 'package:bsuniverse/game/setup/canteen.dart';
+import 'package:bsuniverse/game/setup/abb_room.dart';
+import 'package:bsuniverse/game/setup/library_room.dart';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/experimental.dart';
@@ -14,52 +35,139 @@ import 'package:flutter/material.dart';
 
 // Scene Configuration
 final Map<String, Map<String, dynamic>> tmxConfig = {
-  "bedroom": {"image": "Bedroom.tmx", "zoom": 3, "w": 3, "h": 8},
-  "mapBsu": {"image": "bsu-map.tmx", "zoom": 3, "w": 30, "h": 40},
-  "lsb": {"image": "cecs.tmx", "zoom": 3, "w": 57, "h": 39},
-  "vmb": {"image": "hebuilding.tmx", "zoom": 3, "w": 10, "h": 10},
-  "aab": {"image": "old_building.tmx", "zoom": 3, "w": 10, "h": 10},
-  "gzb": {"image": "gzbuilding.tmx", "zoom": 3, "w": 57, "h": 39},
-  "gymn": {"image": "gzbuilding.tmx", "zoom": 3, "w": 57, "h": 39},
-  "gymnOpenArea": {"image": "gzbuilding.tmx", "zoom": 3, "w": 57, "h": 39},
-  "multimedia": {"image": "multimedia.tmx", "zoom": 3, "w": 10, "h": 10},
-  "lsbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 10, "h": 10},
+  "facade": {"image": "facade.tmx", "zoom": 4.0, "w": 25, "h": 11},
+  "bedroom": {"image": "Bedroom.tmx", "zoom": 4.0, "w": 3, "h": 5},
+  "mapBsu": {"image": "bsu-map.tmx", "zoom": 3.7, "w": 30, "h": 40},
+  "lsb": {"image": "cecs.tmx", "zoom": 4.0, "w": 57, "h": 39},
+  "vmb": {"image": "hebuilding.tmx", "zoom": 4.0, "w": 45, "h": 44},
+  "abb": {"image": "old_building.tmx", "zoom": 4.0, "w": 45, "h": 44},
+  "gzb": {"image": "gzbuilding.tmx", "zoom": 4.0, "w": 59, "h": 41},
+  "gymn": {"image": "Gym.tmx", "zoom": 4.0, "w": 13, "h": 9},
+  "gymnOpenArea": {"image": "Gym.tmx", "zoom": 4.0, "w": 13, "h": 9},
+  "multimedia": {"image": "multimedia.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "lsbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "comLab502Lsb": {
-    "image": "classroom_cecs-heb.tmx",
-    "zoom": 3,
+    "image": "Comlab502_cecs.tmx",
+    "zoom": 4.0,
     "w": 10,
     "h": 10,
   },
   "comLab503Lsb": {
-    "image": "classroom_cecs-heb.tmx",
-    "zoom": 3,
+    "image": "Comlab502_cecs.tmx",
+    "zoom": 4.0,
     "w": 10,
     "h": 10,
   },
-  "comLab301Vmb": {
-    "image": "classroom_cecs-heb.tmx",
-    "zoom": 3,
-    "w": 10,
-    "h": 10,
-  },
-  "comLab302Vmb": {
-    "image": "classroom_cecs-heb.tmx",
-    "zoom": 3,
-    "w": 10,
-    "h": 10,
-  },
-  "vmbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 13, "h": 9},
-  "aabRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 10, "h": 10},
-  "gzbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 10, "h": 10},
-  "library": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 10, "h": 10},
-  "canteen": {"image": "classroom_cecs-heb.tmx", "zoom": 3, "w": 10, "h": 10},
+  "comLab301Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "comLab302Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "vmbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 13, "h": 9},
+  "abbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "gzbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "library": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "canteen": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
 };
 
-enum FloorList { f1, f2, f3, f4, f5 }
+class FloorList {
+  RoomList? floor1, floor2, floor3, floor4, floor5;
+  bool? goOut, goIn;
+  FloorList({
+    this.floor1,
+    this.floor2,
+    this.floor3,
+    this.floor4,
+    this.floor5,
+    this.goIn,
+    this.goOut,
+  });
+
+  List<String> getActivePortals() {
+    if (goOut != null) {
+      print("Out Triggered!GRRR");
+      return ['out'];
+    }
+    if (goIn != null) {
+      return ['in'];
+    }
+    if (floor1 != null &&
+        floor2 == null &&
+        floor3 == null &&
+        floor4 == null &&
+        floor5 == null) {
+      return ['1st', _getRoom(floor1)];
+    } else if (floor2 != null &&
+        floor1 == null &&
+        floor3 == null &&
+        floor4 == null &&
+        floor5 == null) {
+      return ['2nd', _getRoom(floor2)];
+    } else if (floor3 != null &&
+        floor1 == null &&
+        floor2 == null &&
+        floor4 == null &&
+        floor5 == null) {
+      return ['3rd', _getRoom(floor3)];
+    } else if (floor4 != null &&
+        floor1 == null &&
+        floor2 == null &&
+        floor3 == null &&
+        floor5 == null) {
+      return ['4th', _getRoom(floor4)];
+    } else if (floor5 != null &&
+        floor1 == null &&
+        floor2 == null &&
+        floor3 == null &&
+        floor4 == null) {
+      return ['5th', _getRoom(floor5)];
+    } else {
+      return ['none', "none"];
+    }
+  }
+
+  String _getRoom(RoomList? floor) {
+    String room;
+    switch (floor) {
+      case RoomList.d1:
+        room = "d1";
+        break;
+      case RoomList.d2:
+        room = "d2";
+        break;
+      case RoomList.d3:
+        room = "d3";
+        break;
+      case RoomList.d4:
+        room = "d4";
+        break;
+      case RoomList.d5:
+        room = "d5";
+        break;
+      case RoomList.d6:
+        room = "d6";
+        break;
+      case RoomList.d7:
+        room = "d7";
+        break;
+      case RoomList.d8:
+        room = "d8";
+        break;
+      case RoomList.d9:
+        room = "d9";
+        break;
+      case RoomList.d10:
+        room = "d10";
+        break;
+      default:
+        room = "";
+        break;
+    }
+    return room;
+  }
+}
 
 enum RoomList { d1, d2, d3, d4, d5, d6, d7, d8, d9, d10 }
 
 enum GoTo {
+  bedroom,
   lsb,
   vmb,
   gzb,
@@ -78,10 +186,15 @@ enum GoTo {
   canteen,
   genRoomABB,
   library,
+  facade,
 }
 
 // ---------------------MAIN GAME-----------------------
-
+  double height = 60;
+  double width = 60;
+  double mapHeight = height * 32;
+  double mapWidth = width * 32;
+  double zoomValue = 3.0;
 class BSUniverseGame extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
   bool initialized = false;
@@ -89,8 +202,8 @@ class BSUniverseGame extends FlameGame
   late final PlayerComponent player;
   late final JoystickComponent joystick;
   late final GameSoundManager soundManager;
-   Scene? currentScene; 
-   CameraComponent? currentCamera;
+  Scene? currentScene;
+  CameraComponent? currentCamera;
 
   // Button components
   late final StatusButtonComponent buttonA;
@@ -103,11 +216,7 @@ class BSUniverseGame extends FlameGame
   // Bedroom 3 x 8
   // CECS Flor 39x38
   // GZB 57 x 39
-  late double height = 39;
-  late double width = 38;
-  late double mapHeight = height * 32;
-  late double mapWidth = width * 32;
-  late double zoomValue = 3.0;
+
 
   @override
   void onGameResize(Vector2 canvasSize) async {
@@ -189,14 +298,12 @@ class BSUniverseGame extends FlameGame
         size: muteButtonSize,
       );
 
+      // // player.debugMode = true;
+      // player.debugColor = Colors.white;
       // player.debugMode = true;
-      player.debugColor = Colors.white;
-      player.debugMode = true;
 
-      debugMode = true;
-      await changeScene(GoTo.lsb);
-
-
+      // debugMode = true;
+      await changeScene(GoTo.bedroom, Vector2(104, 66));
 
       // Add UI components
 
@@ -211,7 +318,8 @@ class BSUniverseGame extends FlameGame
     }
   }
 
-  Future<void> changeScene(GoTo sceneName) async {
+  Future<void> changeScene(GoTo sceneName, Vector2 position) async {
+    // Position Will Be removed as parameter and be set in here.
     // Remove current world/scene if any
     if (currentScene != null) {
       remove(currentCamera!);
@@ -219,39 +327,35 @@ class BSUniverseGame extends FlameGame
       currentScene = null; // Clear the reference
       currentCamera = null;
     }
-
+    Vector2 playerSize = Vector2.all(32);
+    dynamic playerSpeed = 80.0;
+    if(sceneName == GoTo.map) {
+      playerSpeed = 40.0;
+    }
     Scene newScene = Scene(sceneName: sceneName);
     await newScene.initialize();
     print(newScene.sceneMap);
     currentScene = newScene;
-      await add(currentScene!);
-      await currentScene?.add(player);
+    await add(currentScene!);
+    await currentScene?.add(player..size= playerSize ..moveSpeed=playerSpeed);
     currentCamera = CameraComponent(world: currentScene)
-        ..viewfinder.zoom = 3.0
-        ..viewfinder.anchor = Anchor.center
-        ..follow(player..position = Vector2(60, 168));
-      currentCamera?.viewport.add(joystick);
-      currentCamera?.viewport.add(buttonD);
-      currentCamera?.viewport.add(buttonC);
-      currentCamera?.viewport.add(buttonB);
-      currentCamera?.viewport.add(buttonA);
-      currentCamera?.viewport.add(muteButton);
-      currentCamera?.setBounds(
-        Rectangle.fromCenter(
-          center: Vector2.zero(),
-          // Its zoomed in by 2,
-          size: Vector2(
-             mapWidth * 2.0,
-             mapHeight * 2.0,
-          ),
-        ),
-      );
-      await add(currentCamera!);
-  }
-
-  Future<void> loadInitialScene() async {
-    // Load the initial BSU map
-    await changeScene(GoTo.map);
+      ..viewfinder.zoom = zoomValue
+      ..viewfinder.anchor = Anchor.center
+      ..follow(player..position = position);
+    currentCamera?.viewport.add(joystick);
+    currentCamera?.viewport.add(buttonD);
+    currentCamera?.viewport.add(buttonC);
+    currentCamera?.viewport.add(buttonB);
+    currentCamera?.viewport.add(buttonA);
+    currentCamera?.viewport.add(muteButton);
+    currentCamera?.setBounds(
+      Rectangle.fromCenter(
+        center: Vector2.zero(),
+        // Its zoomed in by 2,
+        size: Vector2(mapWidth * 2.0, mapHeight * 2.0),
+      ),
+    );
+    await add(currentCamera!);
   }
 
   // Method to update button positions on screen resize
@@ -294,18 +398,40 @@ class BSUniverseGame extends FlameGame
 }
 
 // Portal Component that handles scene transitions
-class Portal extends RectangleComponent with HasGameReference {
+class Portal extends RectangleComponent
+    with CollisionCallbacks, HasGameReference<BSUniverseGame> {
   final GoTo destination;
-
+  final TiledComponent map;
+  final Vector2 startingPosition;
+  final FloorList selection;
   Portal({
-    required Vector2 position,
-    required Vector2 size,
+    required this.map,
     required this.destination,
-  }) : super(
-         position: position,
-         size: size,
-         paint: Paint()..color = Colors.transparent,
-       );
+    required this.startingPosition,
+    required this.selection,
+  }) : super(paint: Paint()..color = const Color.fromARGB(255, 0, 0, 0));
+
+  @override
+  Future<void> onLoad() async {
+    add(
+      RectangleHitbox()
+        ..collisionType = CollisionType.passive
+        // ..debugMode = true
+        ..debugColor = Color.fromARGB(255, 0, 234, 255),
+    );
+  }
+
+  // void getNameTag
+  // use SWITCH CASE
+
+  @override
+  Future<void> onCollision(
+    Set<Vector2> intersectionPoints,
+    PositionComponent other,
+  ) async {
+    super.onCollision(intersectionPoints, other);
+    await game.changeScene(destination, startingPosition);
+  }
 }
 
 // Popup Component that handles NPC interactions
@@ -340,6 +466,12 @@ class Scene extends World {
 
   Future<void> initialize() async {
     switch (sceneName) {
+      case GoTo.facade:
+        sceneMap = await _setMap("facade");
+        break;
+      case GoTo.bedroom:
+        sceneMap = await _setMap("bedroom");
+        break;
       case GoTo.map:
         sceneMap = await _setMap("mapBsu");
         break;
@@ -385,6 +517,9 @@ class Scene extends World {
       case GoTo.canteen:
         sceneMap = await _setMap("canteen");
         break;
+      case GoTo.abb:
+        sceneMap = await _setMap("abb");
+        break;
       case GoTo.genRoomABB:
         sceneMap = await _setMap("abbRoom");
         break;
@@ -392,7 +527,7 @@ class Scene extends World {
         sceneMap = await _setMap("libraryRoom");
         break;
       default:
-        sceneMap = await _setMap("lsb");
+        sceneMap = await _setMap("bedroom");
         break;
     }
     print(sceneName);
@@ -405,21 +540,22 @@ class Scene extends World {
       Vector2.all(32),
       priority: -1,
     );
+    
     _setZoomCam(
       tmxConfig[map]?["zoom"],
       tmxConfig[map]?["w"],
       tmxConfig[map]?["h"],
     );
     _setUpCollisions(mapTiled);
-    _setUpPortals(mapTiled);
+    _setUpPortals(mapTiled, map);
     _setUpPopups(mapTiled);
     return mapTiled;
   }
 
-  Future<void> _setZoomCam(double z, double w, double h) async {
-    zoom = z;
-    width = w?.toInt();
-    height = h?.toInt();
+  Future<void> _setZoomCam(double z, int w, int h) async {
+    zoomValue = z;
+    width = w;
+    height = h;
     print(zoom);
     print(width);
     print(height);
@@ -430,28 +566,85 @@ class Scene extends World {
     if (collisions != null) {
       for (final obj in collisions.objects) {
         map.add(
-          Collision(Vector2(obj.x, obj.y), Vector2(obj.width, obj.height),ColType.wall,GoTo.gzb),
+          Collision(
+            Vector2(obj.x, obj.y),
+            Vector2(obj.width, obj.height),
+            ColType.back,
+            GoTo.gzb,
+          ),
         );
       }
     }
   }
 
-  Future<void> _setUpPortals(TiledComponent map) async {
+  Future<void> _setUpPortals(TiledComponent map, String mapName) async {
     // Handles RoomPortals group folder, with subgroups 1st, 2nd, etc.
-    final roomPortalsGroup = map.tileMap.getLayer<Group>('RoomPortals');
-    if (roomPortalsGroup != null) {
-      for (final subGroup in roomPortalsGroup.layers.whereType<ObjectGroup>()) {
-        for (final obj in subGroup.objects) {
-          // You may want to parse destination from obj.properties if available
-          map.add(
-            Collision(
-              Vector2(obj.x, obj.y),
-              Vector2(obj.width, obj.height), 
-              ColType.portal,GoTo.genRoomVMB
-            ),
-          );
-        }
-      }
+    print("I WAS ABLE TO LAYOUT ALL THE PORTALS!");
+    switch (mapName) {
+      case "facade":
+        print("IM AT FACADE");
+        setUpFacade(map);
+        break;
+      case "bedroom":
+        setUpBedroom(map);
+        break;
+      case "mapBsu":
+        setUpMapBsu(map);
+        break;
+      case "lsb":
+        setUpLsb(map);
+        break;
+      case "vmb":
+        setUpVmb(map);
+        break;
+      case "gzb":
+        setUpGzb(map);
+        break;
+      case "gymn":
+        setUpGymn(map);
+        break;
+      case "lsbRoom":
+        setUpLsbRoom(map);
+        break;
+      case "comLab502Lsb":
+        setUpComLab502Lsb(map);
+        break;
+      case "comLab503Lsb":
+        setUpComLab503Lsb(map);
+        break;
+      case "vmbRoom":
+        setUpVmbRoom(map);
+        break;
+      case "comLab301Vmb":
+        setUpComLab301Vmb(map);
+        break;
+      case "comLab302Vmb":
+        setUpComLab302Vmb(map);
+        break;
+      case "multimedia":
+        setUpMultimedia(map);
+        break;
+      case "gymnOpenArea":
+        setUpGymnOpenArea(map);
+        break;
+      case "gzbRoom":
+        setUpGzbRoom(map);
+        break;
+      case "canteen":
+        setUpCanteen(map);
+        break;
+      case "abb":
+        setUpAbb(map);
+        break;
+      case "abbRoom":
+        setUpAbbRoom(map);
+        break;
+      case "libraryRoom":
+        setUpLibraryRoom(map);
+        break;
+      default:
+        setUpLsb(map);
+        break;
     }
   }
 
@@ -462,13 +655,7 @@ class Scene extends World {
       for (final subGroup in popupsGroup.layers.whereType<ObjectGroup>()) {
         for (final obj in subGroup.objects) {
           // You may want to parse popup data from obj.properties if available
-          map.add(
-            Collision(
-              Vector2(obj.x, obj.y),
-              Vector2(obj.width, obj.height),
-              ColType.wall,GoTo.gzb
-            ),
-          );
+          // TODO: Add popup creation logic here
         }
       }
     }

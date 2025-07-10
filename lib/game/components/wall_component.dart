@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 
-enum ColType {wall,portal,popup}
+enum ColType {back,above,walk}
 class Collision extends PositionComponent with CollisionCallbacks, HasGameReference<BSUniverseGame> {
   final ColType type;
   final GoTo sceneName;
@@ -24,12 +24,11 @@ class Collision extends PositionComponent with CollisionCallbacks, HasGameRefere
   Future<void> onCollision(Set<Vector2> intersectionPoints, PositionComponent other) async {
     super.onCollision(intersectionPoints, other);
     switch(type) {
-      case ColType.wall:
+      case ColType.back:
         break;
-      case ColType.portal:
-        await game.changeScene(sceneName);
+      case ColType.above:
         break;
-      case ColType.popup:
+      case ColType.walk:
         break;
     }
   }
