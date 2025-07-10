@@ -231,12 +231,23 @@ class NPCSpriteConfig {
   );
 }
 
-class QuestOverlay extends StatefulWidget {
-  final FlameGame game;
+// Data class for quest questions
+class QuestQuestion {
   final String question;
   final List<String> options;
-  final void Function(int, bool) onOptionSelected; // Added bool for correct/incorrect
-  final int correctAnswerIndex; // Index of the correct answer
+  final int correctAnswerIndex;
+
+  const QuestQuestion({
+    required this.question,
+    required this.options,
+    required this.correctAnswerIndex,
+  });
+}
+
+class QuestOverlay extends StatefulWidget {
+  final FlameGame game;
+  final List<QuestQuestion> questions; // List of all questions in the quest
+  final void Function(int, bool, bool, int, int) onOptionSelected; // questIndex, isCorrect, isQuestComplete, coinsEarned, correctAnswers
   final int initialHearts; // Initial hearts count
   final PlayerSpriteConfig playerSprite; // Player sprite configuration
   final NPCSpriteConfig npcSprite; // NPC sprite configuration
@@ -245,10 +256,8 @@ class QuestOverlay extends StatefulWidget {
   const QuestOverlay({
     Key? key,
     required this.game,
-    required this.question,
-    required this.options,
+    required this.questions,
     required this.onOptionSelected,
-    required this.correctAnswerIndex,
     required this.playerSprite,
     required this.npcSprite,
     this.initialHearts = 3,
@@ -260,29 +269,69 @@ class QuestOverlay extends StatefulWidget {
 
 class _QuestOverlayState extends State<QuestOverlay> {
   late int hearts;
+  late int currentQuestionIndex;
+  late int correctAnswers; // Track number of correct answers
 
   @override
   void initState() {
     super.initState();
     hearts = widget.initialHearts;
+    currentQuestionIndex = 0;
+    correctAnswers = 0;
   }
 
+  QuestQuestion get currentQuestion => widget.questions[currentQuestionIndex];
+
   void _handleOptionSelected(int index) {
-    if (index == widget.correctAnswerIndex) {
-      // Correct answer - quest completed
-      widget.onOptionSelected(index, true);
+    final isCorrect = index == currentQuestion.correctAnswerIndex;
+    
+    if (isCorrect) {
+      // Correct answer - increment counter
+      setState(() {
+        correctAnswers++;
+      });
     } else {
       // Wrong answer - lose a heart
       setState(() {
         hearts--;
       });
-      
-      if (hearts <= 0) {
-        // No hearts left - quest failed
-        widget.onOptionSelected(index, false);
-      }
-      // If hearts > 0, continue with the quest (don't close overlay)
     }
+    
+    // Check if quest should end (either no hearts left or last question completed)
+    final bool isQuestComplete;
+    final int coinsEarned;
+    
+    if (hearts <= 0) {
+      // Quest failed - no hearts left
+      isQuestComplete = true;
+      coinsEarned = -2; // Penalty for failing
+    } else if (currentQuestionIndex >= widget.questions.length - 1) {
+      // Last question completed with hearts remaining
+      isQuestComplete = true;
+      // Calculate coin reward based on hearts remaining
+      switch (hearts) {
+        case 3:
+          coinsEarned = 5;
+          break;
+        case 2:
+          coinsEarned = 3;
+          break;
+        case 1:
+          coinsEarned = 1;
+          break;
+        default:
+          coinsEarned = 0;
+      }
+    } else {
+      // Move to next question
+      isQuestComplete = false;
+      coinsEarned = 0;
+      setState(() {
+        currentQuestionIndex++;
+      });
+    }
+    
+    widget.onOptionSelected(currentQuestionIndex, isCorrect, isQuestComplete, coinsEarned, correctAnswers);
   }
 
   @override
@@ -320,36 +369,61 @@ class _QuestOverlayState extends State<QuestOverlay> {
       ),
       child: Stack(
         children: [
-          // Hearts indicator (top left) - consistent size
+          // Hearts and progress indicator (top left) - consistent size
           Positioned(
             top: 30,
             left: isLandscape ? screenWidth * 0.15 : 15,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.black, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black54,
-                    blurRadius: 3,
-                    offset: Offset(1, 1),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Hearts indicator
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.black, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black54,
+                        blurRadius: 3,
+                        offset: Offset(1, 1),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(3, (index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 2),
-                    child: Text(
-                      index < hearts ? '❤️' : '🖤',
-                      style: TextStyle(fontSize: 20),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(3, (index) {
+                      return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 2),
+                        child: Text(
+                          index < hearts ? '❤️' : '🖤',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                SizedBox(height: 8),
+                // Question progress indicator
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.blue, width: 2),
+                  ),
+                  child: Text(
+                    'Q ${currentQuestionIndex + 1}/3',
+                    style: TextStyle(
+                      fontFamily: 'VT323',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[800],
                     ),
-                  );
-                }),
-              ),
+                  ),
+                ),
+              ],
             ),
           ),
           
@@ -437,7 +511,7 @@ class _QuestOverlayState extends State<QuestOverlay> {
                       border: Border.all(color: Colors.grey[400]!, width: 2),
                     ),
                     child: Text(
-                      widget.question,
+                      currentQuestion.question,
                       style: TextStyle(
                         fontFamily: 'VT323',
                         fontSize: isLandscape ? 16 : 18,
@@ -456,7 +530,7 @@ class _QuestOverlayState extends State<QuestOverlay> {
                     crossAxisSpacing: isLandscape ? 6 : 8,
                     childAspectRatio: isLandscape ? 10.5 : 3.5,
                     physics: NeverScrollableScrollPhysics(),
-                    children: List.generate(widget.options.length, (index) {
+                    children: List.generate(currentQuestion.options.length, (index) {
                       return Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black, width: 2),
@@ -470,8 +544,8 @@ class _QuestOverlayState extends State<QuestOverlay> {
                         ),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF6E0E15),
-                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.grey[300],
+                            foregroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4),
                             ),
@@ -483,7 +557,7 @@ class _QuestOverlayState extends State<QuestOverlay> {
                           ),
                           onPressed: () => _handleOptionSelected(index),
                           child: Text(
-                            widget.options[index],
+                            currentQuestion.options[index],
                             style: TextStyle(
                               fontFamily: 'VT323',
                               fontSize: isLandscape ? 14 : 16,
@@ -508,11 +582,17 @@ class _QuestOverlayState extends State<QuestOverlay> {
 // Quest Result Overlay for showing completion/failure messages
 class QuestResultOverlay extends StatefulWidget {
   final bool isSuccess;
+  final int coinsEarned;
+  final int correctAnswers; // Number of correct answers (0-3)
+  final int totalQuestions; // Total number of questions (usually 3)
   final VoidCallback onDismiss;
 
   const QuestResultOverlay({
     Key? key,
     required this.isSuccess,
+    required this.coinsEarned,
+    required this.correctAnswers,
+    this.totalQuestions = 3,
     required this.onDismiss,
   }) : super(key: key);
 
@@ -524,13 +604,12 @@ class _QuestResultOverlayState extends State<QuestResultOverlay>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2500),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
@@ -539,20 +618,10 @@ class _QuestResultOverlayState extends State<QuestResultOverlay>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: const Interval(0.0, 0.3, curve: Curves.elasticOut),
+      curve: Curves.elasticOut,
     ));
 
-    _fadeAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeInOut),
-    ));
-
-    _controller.forward().then((_) {
-      widget.onDismiss();
-    });
+    _controller.forward();
   }
 
   @override
@@ -569,62 +638,156 @@ class _QuestResultOverlayState extends State<QuestResultOverlay>
         return Container(
           width: double.infinity,
           height: double.infinity,
-          color: Colors.black.withOpacity(0.3 * _fadeAnimation.value),
+          color: Colors.black.withOpacity(0.5),
           child: Center(
             child: Transform.scale(
               scale: _scaleAnimation.value,
-              child: Opacity(
-                opacity: _fadeAnimation.value,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 20,
-                  ),
-                  decoration: BoxDecoration(
-                    color: widget.isSuccess ? Colors.green : Colors.red,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white, width: 3),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black54,
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        widget.isSuccess ? Icons.check_circle : Icons.cancel,
-                        size: 60,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        widget.isSuccess ? 'QUEST COMPLETED!' : 'QUEST FAILED!',
-                        style: const TextStyle(
-                          fontFamily: 'VT323',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      if (!widget.isSuccess) ...[
-                        const SizedBox(height: 8),
-                        const Text(
-                          'No hearts remaining',
-                          style: TextStyle(
-                            fontFamily: 'VT323',
-                            fontSize: 16,
-                            color: Colors.white70,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 20,
+                ),
+                decoration: BoxDecoration(
+                  color: widget.isSuccess ? const Color.fromARGB(255, 52, 106, 54) : const Color.fromARGB(255, 121, 46, 41),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white, width: 3),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  clipBehavior: Clip.none, // Allow elements to extend beyond container bounds
+                  children: [
+                    // Main content
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0), // Add top padding to make room for close button
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            widget.isSuccess ? Icons.check_circle : Icons.cancel,
+                            size: 60,
+                            color: Colors.white,
                           ),
-                          textAlign: TextAlign.center,
+                          const SizedBox(height: 12),
+                          Text(
+                            widget.isSuccess ? 'QUEST COMPLETED!' : 'QUEST FAILED!',
+                            style: const TextStyle(
+                              fontFamily: 'VT323',
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          // Correct answers display
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.blue[700],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.quiz,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  '${widget.correctAnswers}/${widget.totalQuestions} Correct',
+                                  style: TextStyle(
+                                    fontFamily: 'VT323',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          // Coin reward/penalty display
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: widget.coinsEarned >= 0 ? const Color.fromARGB(255, 123, 105, 27) : const Color.fromARGB(255, 111, 26, 26),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '🪙',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  widget.coinsEarned >= 0 ? '+${widget.coinsEarned}' : '${widget.coinsEarned}',
+                                  style: TextStyle(
+                                    fontFamily: 'VT323',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (!widget.isSuccess) ...[
+                            const SizedBox(height: 8),
+                            const Text(
+                              'No hearts remaining',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontSize: 16,
+                                color: Colors.white70,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // Close button (X) in top right corner
+                    Positioned(
+                      top: -15,
+                      right: -15,
+                      child: GestureDetector(
+                        onTap: widget.onDismiss,
+                        child: Container(
+                          width: 35,
+                          height: 35,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4,
+                                offset: Offset(2, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.black,
+                          ),
                         ),
-                      ],
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
