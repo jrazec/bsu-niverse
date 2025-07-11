@@ -1,4 +1,5 @@
 import 'package:bsuniverse/main.dart';
+import 'package:bsuniverse/pages/home.dart' hide ashMaroon;
 import 'package:flutter/material.dart';
 
 class Leaderboards extends StatelessWidget {
@@ -45,7 +46,7 @@ class Leaderboards extends StatelessWidget {
     ];
 
     return Container(
-      color: ashMaroon,
+      color: fineRed,
       padding: EdgeInsets.all(30),
       child: Column(
         children: [
@@ -57,7 +58,7 @@ class Leaderboards extends StatelessWidget {
                 width: 400,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 177, 29, 27),
+                  color: ashMaroon,
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromRGBO(0, 0, 0, 1),
@@ -85,7 +86,7 @@ class Leaderboards extends StatelessWidget {
                 width: 250,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(201, 33, 30, 1.0),
+                  color: ashMaroon,
                   boxShadow: [
                     BoxShadow(
                       color: Color.fromRGBO(0, 0, 0, 1),
@@ -111,20 +112,17 @@ class Leaderboards extends StatelessWidget {
                   "LEADERBOARDS",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'OrangeKid',
+                    fontFamily: 'PixeloidSans-Bold',
                     fontWeight: FontWeight.bold,
-                    fontSize: 40,
+                    fontSize: 25,
                     color: Color.fromRGBO(240, 240, 22, 1),
                   ),
                 ),
               ),
             ],
           ),
-          Divider(
-            height: 40,
-            color: Colors.white,
+          Divider(height: 40, color: Colors.white),
 
-          ),
           // Leaderboard Cards
           ...leaderboard.map((user) {
             return Padding(

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="42">
+ <tileset firstgid="1" source="comlab-cecs.tsx"/>
+ <tileset firstgid="46" source="test.tsx"/>
+ <tileset firstgid="47" source="comlab-cecs2.tsx"/>
+ <layer id="5" name="Tile Layer 1" width="13" height="9" locked="1">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,47,48,49,50,51,52,53,54,55,0,0,
+0,0,56,57,58,59,60,61,62,63,64,0,0,
+0,0,65,66,67,68,69,70,71,72,73,0,0,
+0,0,74,75,76,77,78,79,80,81,82,0,0,
+0,0,83,84,85,86,87,88,89,90,91,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="Collisions">
+  <object id="2" x="130.833" y="64.25" width="109.417" height="26.25"/>
+  <object id="3" x="235.75" y="64.25" width="54.25" height="15.75"/>
+  <object id="4" x="281" y="64.5" width="10" height="58.25"/>
+  <object id="8" x="135.531" y="142.578" width="101.984" height="3.42154"/>
+  <object id="15" x="282.5" y="170.364" width="4.25" height="47.136"/>
+  <object id="17" x="128.75" y="207.119" width="113" height="10.6311"/>
+  <object id="22" x="56.1813" y="65.2047" width="288.333" height="6"/>
+  <object id="23" x="280.667" y="65.3333" width="71" height="60"/>
+  <object id="25" x="57.3896" y="64.9963" width="69.9167" height="15.75"/>
+  <object id="26" x="57.2229" y="65.9963" width="4.25003" height="159.417"/>
+  <object id="29" x="58.3896" y="62.9964" width="17.5834" height="73.0833"/>
+  <object id="31" x="58.3896" y="172.329" width="22.9167" height="52.0833"/>
+  <object id="33" x="58.1813" y="228.538" width="309.371" height="6.66667"/>
+  <object id="34" x="352.529" y="65" width="5.66667" height="171.809"/>
+ </objectgroup>
+ <group id="8" name="Popups">
+  <objectgroup id="4" name="1st">
+   <object id="1" name="1" gid="46" x="214" y="123" width="32" height="32"/>
+   <object id="5" name="1" gid="46" x="247.25" y="145.5" width="32" height="32"/>
+   <object id="6" name="1" gid="46" x="247.5" y="110.25" width="32" height="32"/>
+   <object id="7" name="1" gid="46" x="185.75" y="141" width="32" height="32"/>
+   <object id="9" name="1" gid="46" x="157" y="141.25" width="32" height="32"/>
+   <object id="10" name="1" gid="46" x="126.5" y="140.25" width="32" height="32"/>
+   <object id="11" name="1" gid="46" x="213.5" y="179" width="32" height="32"/>
+   <object id="12" name="1" gid="46" x="182.5" y="178.75" width="32" height="32"/>
+   <object id="13" name="1" gid="46" x="124.5" y="203" width="32" height="32"/>
+   <object id="14" name="1" gid="46" x="124.75" y="179" width="32" height="32"/>
+   <object id="16" name="1" gid="46" x="267.917" y="161.833" width="32" height="32"/>
+   <object id="18" name="1" gid="46" x="213.5" y="203.25" width="32" height="32"/>
+   <object id="19" name="1" gid="46" x="181.25" y="203" width="32" height="32"/>
+   <object id="20" name="1" gid="46" x="155.5" y="203" width="32" height="32"/>
+   <object id="21" name="1" gid="46" x="158.5" y="176.25" width="32" height="32"/>
+   <object id="24" name="1" gid="46" x="81.6667" y="112.333" width="32" height="32"/>
+   <object id="27" name="1" gid="46" x="83" y="142.333" width="32" height="32"/>
+   <object id="28" name="1" gid="46" x="71" y="169.667" width="32" height="32"/>
+   <object id="30" name="1" gid="46" x="98" y="168" width="32" height="32"/>
+   <object id="32" name="1" gid="46" x="91.6667" y="208" width="32" height="32"/>
+   <object id="35" name="1" gid="46" x="300.333" y="210" width="32" height="32"/>
+   <object id="39" name="1" gid="46" x="244.667" y="215.333" width="32" height="32"/>
+   <object id="40" name="1" gid="46" x="312.333" y="160" width="32" height="32"/>
+  </objectgroup>
+ </group>
+ <objectgroup id="6" name="in">
+  <object id="36" x="85.4717" y="218.442" width="30" height="12.6667"/>
+ </objectgroup>
+ <objectgroup id="9" name="out">
+  <object id="41" x="305.653" y="220.195" width="29.3177" height="11.8519"/>
+ </objectgroup>
+ <objectgroup id="7" name="Spawn">
+  <object id="38" x="316.667" y="172.333">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

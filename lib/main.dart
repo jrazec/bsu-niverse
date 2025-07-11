@@ -1,3 +1,4 @@
+import 'screens/game_screen.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/leaderboards.dart';
@@ -47,7 +48,8 @@ class MyApp extends StatelessWidget {
         '/user-manual' : (context) => Manual(),
         '/leaderboards' : (context) => Leaderboards(),
         '/settings' : (context) => Settings(),
-        '/loading' : (context) => SpartanLoadingScreen()
+        '/loading' : (context) => SpartanLoadingScreen(),
+        '/game' : (context) => GameScreen()
       },
     );
   }

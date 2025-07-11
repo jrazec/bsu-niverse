@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="57" height="39" tilewidth="32" tileheight="32" infinite="0" nextlayerid="85" nextobjectid="1001">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="57" height="39" tilewidth="32" tileheight="32" infinite="0" nextlayerid="87" nextobjectid="1007">
  <tileset firstgid="1" source="map.tsx"/>
  <tileset firstgid="129" source="hallway.tsx"/>
  <tileset firstgid="285" source="test.tsx"/>
@@ -777,7 +777,7 @@
   </group>
   <objectgroup id="37" name="Collisions">
    <object id="298" x="63.1583" y="1188.87" width="1696.47" height="26.0454"/>
-   <object id="299" x="282.827" y="968.993" width="1256.83" height="129.543"/>
+   <object id="299" x="1028.77" y="968.993" width="510.889" height="129.543"/>
    <object id="300" x="191.736" y="933" width="1440.36" height="42.5362"/>
    <object id="301" x="192" y="677" width="1440.36" height="42.5362"/>
    <object id="302" x="192" y="421" width="1440.36" height="42.5362"/>
@@ -912,6 +912,14 @@
    <object id="997" x="1468.28" y="938.522" width="71.9424" height="132.621"/>
    <object id="999" x="1639.95" y="861.138" width="12.8121" height="4.90677"/>
    <object id="1000" x="1640.41" y="601.176" width="16.7743" height="2.69932"/>
+   <object id="1003" x="282.943" y="968.866" width="645.732" height="128.075"/>
+   <object id="1004" x="899.737" y="965.114" width="166.658" height="96.9937"/>
+  </objectgroup>
+  <objectgroup id="85" name="in">
+   <object id="1001" x="929.942" y="1066.22" width="97.5688" height="20.4734"/>
+  </objectgroup>
+  <objectgroup id="86" name="out">
+   <object id="1006" x="931.354" y="1182.68" width="92.7067" height="27.8656"/>
   </objectgroup>
  </group>
 </map>

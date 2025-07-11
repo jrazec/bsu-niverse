@@ -6,6 +6,7 @@ import 'package:bsuniverse/game/widgets/quest_overlay.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/rendering.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,7 +33,7 @@ class RunPowerupEffect extends PlayerPowerupEffect {
   void activate() {
     if (isActive) return;
     isActive = true;
-    player.moveSpeed = 150;
+    player.moveSpeed = 180;
     overlay =
         OverlayEffect(
             animation: player.runAnimation,
@@ -47,7 +48,7 @@ class RunPowerupEffect extends PlayerPowerupEffect {
   void deactivate() {
     if (!isActive) return;
     isActive = false;
-    player.moveSpeed = 50;
+    player.moveSpeed = 80;
     overlay?.removeFromParent();
     overlay = null;
   }
@@ -162,7 +163,7 @@ class PlayerComponent extends SpriteAnimationComponent
   final JoystickComponent joystick;
   final List<StatusButtonComponent> buttons;
   Vector2 moveDirection = Vector2.zero();
-  double moveSpeed = 50;
+  double moveSpeed = 80;
   PlayerDirection playerDirection = PlayerDirection.none;
 
   late final SpriteAnimation leftAnimation;
@@ -300,6 +301,17 @@ class PlayerComponent extends SpriteAnimationComponent
     animation = idleAnimation;
 
     add(RectangleHitbox()..collisionType = CollisionType.active);
+    
+    // Add shadow effect using HasPaint mixin and custom rendering
+    final shadowComponent = RectangleComponent(
+      size: Vector2(size.x*0.5, size.y * 0.15),
+      position: Vector2(size.x*0.25, size.y*0.75),
+      paint: Paint()
+        ..color = const Color.fromARGB(112, 0, 0, 0)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.0),
+    );
+    shadowComponent.priority = -100;
+    add(shadowComponent);
 
     // Initialize powerup objects
     runPowerup = RunPowerupEffect(this);
@@ -384,7 +396,7 @@ class PlayerComponent extends SpriteAnimationComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is WallComponent) {
+    if (other is Collision) {
       // Attempt sliding: only block movement along the colliding axis
       Vector2 delta = attemptedPosition - previousPosition;
 

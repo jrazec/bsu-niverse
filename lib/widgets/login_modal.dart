@@ -49,7 +49,7 @@ class _LoginModalState extends State<LoginModal> {
       }
 
       Navigator.pop(context);
-      Navigator.pushNamed(context, '/loading');
+      Navigator.pushNamed(context, '/game');
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message;
@@ -102,6 +102,7 @@ class _LoginModalState extends State<LoginModal> {
 
   Widget _buildHeader() {
     return Container(
+      width: 500,
       decoration: const BoxDecoration(
         color: Color.fromRGBO(110, 14, 21, 1.0),
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),

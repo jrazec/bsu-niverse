@@ -85,13 +85,13 @@ class _ManualState extends State<Manual> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                margin: EdgeInsets.fromLTRB(0, 50, 0, 50),
                 child: Text(
                   "ABOUT BSU LIPA",
                   style: TextStyle(
-                    fontFamily: 'VT323',
+                    fontFamily: 'PixeloidSans-Bold',
                     fontWeight: FontWeight.bold,
-                    fontSize: 40,
+                    fontSize: 25,
                     color: championWhite,
                   ),
                 ),
@@ -131,7 +131,7 @@ class _ManualState extends State<Manual> {
                 children: departments
                     .map(
                       (dep) => Container(
-                        margin: EdgeInsets.only(top:50),
+                        margin: EdgeInsets.only(top: 50),
                         child: TitleDesc(
                           description: dep["description"],
                           subTitle: dep["subTitle"],

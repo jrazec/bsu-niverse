@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import '../game/bsuniverse.dart';
+import '../widgets/loading_screen.dart';
 import '../game/widgets/quest_overlay.dart';
 
 class GameScreen extends StatefulWidget {
@@ -11,7 +12,8 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  late BSUniverseGame game;
+  bool _gameLoaded = false;
+  late BSUniverseGame _game;
   int _lastQuestCoins = 0;
   int _lastCorrectAnswers = 0;
   bool _lastQuestSuccess = false;
@@ -23,10 +25,26 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    game = BSUniverseGame();
+    _game = BSUniverseGame();
     _initializeQuestionPool();
     _generateRandomQuest();
+    _loadGame();
   }
+
+  Future<void> _loadGame() async {
+    _game = BSUniverseGame();
+    
+    // Simulate loading time (you can remove this if you want faster loading)
+    await Future.delayed(const Duration(seconds: 2));
+    
+    // Allow the game to initialize
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    setState(() {
+      _gameLoaded = true;
+    });
+  }
+
   
   void _initializeQuestionPool() {
     _availableQuestionIndices = List.generate(allQuestions.length, (index) => index);
@@ -70,11 +88,11 @@ class _GameScreenState extends State<GameScreen> {
       _generateRandomQuest();
       
       // Hide the quest overlay first
-      game.hideQuestOverlay();
+      _game.hideQuestOverlay();
       
       // Show the result overlay after a brief delay
       Future.delayed(const Duration(milliseconds: 300), () {
-        game.showQuestResultOverlay(_lastQuestSuccess);
+        _game.showQuestResultOverlay(_lastQuestSuccess);
         // No auto-hide - player will close it manually with the X button
       });
     }
@@ -187,8 +205,12 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_gameLoaded) {
+      return const SpartanLoadingScreen();
+    }
+    
     return GameWidget<BSUniverseGame>(
-      game: game,
+      game: _game,
       overlayBuilderMap: {
         'QuestOverlay': (context, game) => QuestOverlay(
               game: game,
