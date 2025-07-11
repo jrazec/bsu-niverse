@@ -195,16 +195,17 @@ enum GoTo {
   facade,
 }
 
-  // Portal system for tracking room transitions
-  Vector2? lastPortalPosition;
-  GoTo? lastMap;
+// Portal system for tracking room transitions
+Vector2? lastPortalPosition;
+GoTo? lastMap;
 
 // ---------------------MAIN GAME-----------------------
-  double height = 60;
-  double width = 60;
-  double mapHeight = height * 32;
-  double mapWidth = width * 32;
-  double zoomValue = 3.0;
+double height = 60;
+double width = 60;
+double mapHeight = height * 32;
+double mapWidth = width * 32;
+double zoomValue = 3.0;
+
 class BSUniverseGame extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
   bool initialized = false;
@@ -214,13 +215,11 @@ class BSUniverseGame extends FlameGame
   late final GameSoundManager soundManager;
   Scene? currentScene;
   CameraComponent? currentCamera;
-  
+
   // Portal system for tracking room transitions
   Vector2? lastPortalPosition;
   GoTo? lastMap;
   FloorList? lastPortalSelection;
-
-
 
   // Button components
   late final StatusButtonComponent buttonA;
@@ -233,8 +232,7 @@ class BSUniverseGame extends FlameGame
   // Bedroom 3 x 8
   // CECS Flor 39x38
   // GZB 57 x 39
-    bool isQuestActive = false;
-
+  bool isQuestActive = false;
 
   @override
   void onGameResize(Vector2 canvasSize) async {
@@ -322,7 +320,6 @@ class BSUniverseGame extends FlameGame
 
       debugMode = true;
       await changeScene(GoTo.bedroom, Vector2(104, 66));
-      
 
       // Add UI components
 
@@ -349,7 +346,7 @@ class BSUniverseGame extends FlameGame
     }
     Vector2 playerSize = Vector2.all(32);
     dynamic playerSpeed = 80.0;
-    if(sceneName == GoTo.map) {
+    if (sceneName == GoTo.map) {
       playerSpeed = 40.0;
     }
     Scene newScene = Scene(sceneName: sceneName);
@@ -357,7 +354,11 @@ class BSUniverseGame extends FlameGame
     print(newScene.sceneMap);
     currentScene = newScene;
     await add(currentScene!);
-    await currentScene?.add(player..size= playerSize ..moveSpeed=playerSpeed);
+    await currentScene?.add(
+      player
+        ..size = playerSize
+        ..moveSpeed = playerSpeed,
+    );
     currentCamera = CameraComponent(world: currentScene)
       ..viewfinder.zoom = zoomValue
       ..viewfinder.anchor = Anchor.center
@@ -431,38 +432,38 @@ class BSUniverseGame extends FlameGame
   void showQuestResultOverlay(bool isSuccess) {
     overlays.add(isSuccess ? 'QuestCompleted' : 'QuestFailed');
   }
-  
+
   void hideQuestResultOverlay() {
     overlays.remove('QuestCompleted');
     overlays.remove('QuestFailed');
   }
-  
+
   // Player sprite configuration - now gets it from the actual player component
   PlayerSpriteConfig getCurrentPlayerSprite() {
     // Get the sprite configuration from the actual player component
     return player.getCurrentSpriteConfig();
   }
-  
+
   // NPC sprite configuration - to be updated when NPC interaction system is implemented
   NPCSpriteConfig getCurrentNPCSprite() {
     // TODO: Replace with actual NPC that the player is interacting with
     // For now, return default NPC sprite
     return NPCSpriteConfig.sirtNPC;
   }
-  
+
   // Method to change player outfit (now functional!)
   Future<void> changePlayerOutfit(String spriteSheetName) async {
     await player.changeSpriteSheet(spriteSheetName);
   }
-  
+
   // Examples of how to use the dynamic outfit system:
   // await game.changePlayerOutfit('boy_uniform.png');  // School uniform
-  // await game.changePlayerOutfit('boy_pe.png');       // PE uniform  
+  // await game.changePlayerOutfit('boy_pe.png');       // PE uniform
   // await game.changePlayerOutfit('boy_casual.png');   // Casual clothes
   // The quest overlay will automatically show the correct sprite!
-  
+
   // Example methods for future implementation:
-  
+
   // Method to start quest with specific NPC (to be implemented with NPC system)
   // void startQuestWithNPC(String npcId, String question, List<String> options, int correctAnswer) {
   //   // Get NPC sprite configuration based on npcId
@@ -480,13 +481,16 @@ class BSUniverseGame extends FlameGame
   //     default:
   //       npcConfig = NPCSpriteConfig.sirtNPC;
   //   }
-  //   
+  //
   //   // Show quest overlay with the specific NPC and current player sprite
   //   showQuestOverlay();
   // }
-  
+
   @override
-  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  KeyEventResult onKeyEvent(
+    KeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyQ) {
       showQuestOverlay();
       return KeyEventResult.handled;
@@ -528,15 +532,15 @@ class Portal extends RectangleComponent
     PositionComponent other,
   ) async {
     super.onCollision(intersectionPoints, other);
-    
+
     // Store portal information for return journey
     print("leave room spawnpoint ${selection.leaveRoomSpawnPoint}");
     lastPortalPosition = selection.leaveRoomSpawnPoint;
     lastMap = _getCurrentMap();
-    
+
     await game.changeScene(destination, startingPosition);
   }
-  
+
   GoTo _getCurrentMap() {
     // Determine current map based on the current scene
     if (game.currentScene?.sceneName != null) {
@@ -547,24 +551,61 @@ class Portal extends RectangleComponent
 }
 
 // Popup Component that handles NPC interactions
-class Popup extends RectangleComponent with HasGameReference {
+class Popup extends SpriteComponent
+  with HasGameReference<BSUniverseGame>, CollisionCallbacks {
   final String location;
   final String dialogue;
   final String image;
   final VoidCallback onInteract;
+  bool _hasTriggered = false;
 
   Popup({
-    required Vector2 position,
-    required Vector2 size,
-    required this.location,
-    required this.dialogue,
-    required this.image,
-    required this.onInteract,
+  required Vector2 position,
+  required Vector2 size,
+  required this.location,
+  required this.dialogue,
+  required this.image,
+  required this.onInteract,
   }) : super(
-         position: position,
-         size: size,
-         paint: Paint()..color = Colors.blue.shade300,
-       );
+     position: position,
+     size: size,
+     );
+  @override
+  Future<void> onLoad() async {
+  sprite = await Sprite.load(image);
+  
+  add(
+    RectangleHitbox(
+      size: size / 3,
+      position: Vector2(size.x/2, 5),
+      anchor: Anchor.center,
+    )
+    ..collisionType = CollisionType.passive
+  );
+  }
+
+  @override
+  Future<void> onCollision(
+  Set<Vector2> intersectionPoints,
+  PositionComponent other,
+  ) async {
+  super.onCollision(intersectionPoints, other);
+
+  if (!_hasTriggered) {
+    _hasTriggered = true;
+    print(location);
+    game.showQuestOverlay();
+
+    // Remove collision hitbox to prevent further triggers
+    removeAll(children.whereType<RectangleHitbox>());
+    sprite = null;
+    
+    // Schedule overlay closure after a delay
+    if (!game.isQuestActive) {
+    game.hideQuestOverlay();
+    }
+  }
+  }
 }
 
 class Scene extends World {
@@ -649,7 +690,7 @@ class Scene extends World {
       Vector2.all(32),
       priority: -1,
     );
-    
+
     _setZoomCam(
       tmxConfig[map]?["zoom"],
       tmxConfig[map]?["w"],
@@ -761,10 +802,25 @@ class Scene extends World {
     // Handles Popups group folder, with subgroups 1st, 2nd, etc.
     final popupsGroup = map.tileMap.getLayer<Group>('Popups');
     if (popupsGroup != null) {
+      // final random = Random(DateTime.now().millisecondsSinceEpoch);
+
       for (final subGroup in popupsGroup.layers.whereType<ObjectGroup>()) {
         for (final obj in subGroup.objects) {
-          // You may want to parse popup data from obj.properties if available
-          // TODO: Add popup creation logic here
+          // Randomize popup spawn with 50% chance
+
+          final popup = Popup(
+            position: Vector2(obj.x, obj.y),
+            size: Vector2(obj.width, obj.height),
+            location: obj.properties.getValue('location') ?? 'Unknown Location',
+            dialogue: obj.properties.getValue('dialogue') ?? 'Hello there!',
+            image: obj.properties.getValue('image') ?? 'sirt.png',
+            onInteract: () {
+              // Handle popup interaction - could show quest overlay or dialogue
+              print('Interacting with popup at ${obj.name}');
+            },
+          );
+
+          map.add(popup);
         }
       }
     }
