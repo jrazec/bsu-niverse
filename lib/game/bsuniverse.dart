@@ -2,6 +2,7 @@ import 'package:bsuniverse/game/components/joystick_component.dart';
 import 'package:bsuniverse/game/components/player_component.dart';
 import 'package:bsuniverse/game/components/button_components.dart';
 import 'package:bsuniverse/game/components/mute_button_component.dart';
+import 'package:bsuniverse/game/components/sparta_coins_component.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
 import 'package:bsuniverse/game/setup/abb.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
@@ -61,7 +62,7 @@ final Map<String, Map<String, dynamic>> tmxConfig = {
     "h": 10,
   },
   "comLab503Lsb": {
-    "image": "Comlab502_cecs.tmx",
+    "image": "Comlab503_cecs.tmx",
     "zoom": 4.0,
     "w": 10,
     "h": 10,
@@ -69,8 +70,8 @@ final Map<String, Map<String, dynamic>> tmxConfig = {
   "comLab301Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "comLab302Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "vmbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 13, "h": 9},
-  "abbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
-  "gzbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "abbRoom": {"image": "classroom-ob.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "gzbRoom": {"image": "classroom-ldc.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "libraryRoom": {"image": "Library.tmx", "zoom": 4.0, "w": 17, "h": 9},
   "canteen": {"image": "canteenldc.tmx", "zoom": 4.0, "w": 10, "h": 10},
 };
@@ -237,6 +238,12 @@ class BSUniverseGame extends FlameGame
   late final StatusButtonComponent buttonD;
   late final StatusButtonComponent menuButton;
   late final MuteButtonComponent muteButton;
+  
+  // SpartaCoins system
+  late final SpartaCoinsComponent spartaCoins;
+  
+  // Closet system - track unlocked outfits
+  final Set<String> _unlockedOutfits = {'boy_uniform.png'}; // School uniform is unlocked by default
 
   // The whole Map is 30 x 40 Tiles where each tile is 32x32.
   // Bedroom 3 x 8
@@ -335,6 +342,9 @@ class BSUniverseGame extends FlameGame
         size: muteButtonSize,
       );
 
+      // Initialize SpartaCoins with 10 initial coins
+      spartaCoins = SpartaCoinsComponent(initialCoins: 10);
+
       // player.debugMode = true;
       player.debugColor = Colors.white;
       player.debugMode = true;
@@ -391,6 +401,7 @@ class BSUniverseGame extends FlameGame
     currentCamera?.viewport.add(buttonA);
     currentCamera?.viewport.add(muteButton);
     currentCamera?.viewport.add(menuButton);
+    currentCamera?.viewport.add(spartaCoins);
     currentCamera?.setBounds(
       Rectangle.fromCenter(
         center: Vector2.zero(),
@@ -434,7 +445,7 @@ class BSUniverseGame extends FlameGame
 
   @override
   void update(double dt) async {
-    if (isQuestActive) return; // Pause game update when quest is active
+    if (isQuestActive || isClosetActive) return; // Pause game update when quest or closet is active
     super.update(dt);
     if (initialized) {
       camera.viewfinder.position.round();
@@ -482,7 +493,82 @@ class BSUniverseGame extends FlameGame
     overlays.remove('QuestCompleted');
     overlays.remove('QuestFailed');
   }
+  
+  // Closet overlay management
+  bool isClosetActive = false;
+  
+  void showClosetOverlay() {
+    overlays.add('ClosetOverlay');
+    isClosetActive = true;
+  }
 
+  void hideClosetOverlay() {
+    print("Hiding closet overlay, isClosetActive was: $isClosetActive");
+    overlays.remove('ClosetOverlay');
+    isClosetActive = false;
+    
+    // Reset player movement state to ensure they can move again
+    player.playerDirection = PlayerDirection.none;
+    player.moveDirection = Vector2.zero();
+    
+    print("Closet overlay hidden, isClosetActive now: $isClosetActive");
+  }
+  
+  Future<void> setPlayerOutfit(String newOutfit) async {
+    print("setPlayerOutfit called with: $newOutfit");
+    print("Current player outfit: ${player.currentSpriteSheet}");
+    
+    try {
+      await player.changeSpriteSheet(newOutfit);
+      print("Player outfit changed successfully to: $newOutfit");
+      print("Player current sprite sheet is now: ${player.currentSpriteSheet}");
+    } catch (e) {
+      print("Error changing player outfit: $e");
+    }
+  }
+  
+  // SpartaCoins management methods
+  
+  /// Gets the current amount of SpartaCoins
+  int getSpartaCoins() {
+    return spartaCoins.coins;
+  }
+  
+  /// Adds SpartaCoins to the player's total
+  void addSpartaCoins(int amount) {
+    spartaCoins.addCoins(amount);
+  }
+  
+  /// Removes SpartaCoins from the player's total (won't go below 0)
+  void removeSpartaCoins(int amount) {
+    spartaCoins.removeCoins(amount);
+  }
+  
+  /// Sets the SpartaCoins to a specific amount
+  void setSpartaCoins(int amount) {
+    spartaCoins.updateCoins(amount);
+  }
+  
+  /// Gets the set of unlocked outfits
+  Set<String> getUnlockedOutfits() {
+    return Set.from(_unlockedOutfits);
+  }
+  
+  /// Unlocks a new outfit (for future use - like rewards from quests)
+  void unlockOutfit(String spriteFileName) {
+    _unlockedOutfits.add(spriteFileName);
+  }
+  
+  /// Handles coin rewards/deductions from quest completion
+  void handleQuestCoinReward(int coinsEarned) {
+    if (coinsEarned > 0) {
+      addSpartaCoins(coinsEarned);
+    } else if (coinsEarned < 0) {
+      removeSpartaCoins(-coinsEarned); // Convert negative to positive for removal
+    }
+    // If coinsEarned is 0, no change is made
+  }
+  
   // Player sprite configuration - now gets it from the actual player component
   PlayerSpriteConfig getCurrentPlayerSprite() {
     // Get the sprite configuration from the actual player component
@@ -544,6 +630,14 @@ class BSUniverseGame extends FlameGame
       showMenuScreen();
       return KeyEventResult.handled;
     }
+    
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyC) {
+      if (!isClosetActive && !isQuestActive) {
+        showClosetOverlay();
+      }
+      return KeyEventResult.handled;
+    }
+    
     return super.onKeyEvent(event, keysPressed);
   }
 

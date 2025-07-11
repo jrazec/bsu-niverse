@@ -5,6 +5,7 @@ import '../widgets/loading_screen.dart';
 import '../game/widgets/quest_overlay.dart';
 import '../game/components/menu_screen.dart';
 import '../game/widgets/quest_dialogue_overlay.dart';
+import '../game/widgets/closet_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -88,6 +89,9 @@ class _GameScreenState extends State<GameScreen> {
       
       // Update player data with quest completion
       _game.completeCurrentQuest(coinsEarned, correctAnswers, 3); // 3 questions total
+      
+      // Apply SpartaCoins reward/penalty to the game
+      _game.handleQuestCoinReward(coinsEarned);
       
       // Generate new random quest for next time
       _generateRandomQuest();
@@ -225,6 +229,16 @@ class _GameScreenState extends State<GameScreen> {
               // Use helper methods to get current sprite configurations
               playerSprite: game.getCurrentPlayerSprite(),
               npcSprite: game.getCurrentNPCSprite(),
+            ),
+        'ClosetOverlay': (context, game) => ClosetOverlay(
+              game: game,
+              currentOutfit: game.player.currentSpriteSheet,
+              onOutfitSelected: (newOutfit) async => await game.setPlayerOutfit(newOutfit),
+              onClosed: () => game.hideClosetOverlay(),
+              getSpartaCoins: () => game.getSpartaCoins(),
+              removeSpartaCoins: (amount) => game.removeSpartaCoins(amount),
+              unlockedOutfits: game.getUnlockedOutfits(),
+              onOutfitUnlocked: (spriteFileName) => game.unlockOutfit(spriteFileName),
             ),
         'QuestCompleted': (context, game) => QuestResultOverlay(
               isSuccess: true,

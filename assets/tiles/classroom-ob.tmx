@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="22">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="23">
  <tileset firstgid="1" source="classroom-ob.tsx"/>
  <layer id="1" name="room" width="13" height="9">
   <data encoding="csv">
@@ -35,9 +35,10 @@
   <object id="20" x="271.227" y="170.568" width="0.5" height="40"/>
   <object id="21" x="303.227" y="170.568" width="0.5" height="40"/>
  </objectgroup>
- <objectgroup id="4" name="out"/>
- <objectgroup id="5" name="in">
+ <objectgroup id="4" name="in">
+  <object id="22" x="317.707" y="215.455" width="26" height="8"/>
+ </objectgroup>
+ <objectgroup id="5" name="out">
   <object id="1" x="74" y="219.333" width="24" height="6.66667"/>
-  <object id="2" x="320.667" y="216.667" width="26" height="8"/>
  </objectgroup>
 </map>

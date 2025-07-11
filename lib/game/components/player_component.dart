@@ -6,7 +6,6 @@ import 'package:bsuniverse/game/widgets/quest_overlay.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/rendering.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,14 +33,16 @@ class RunPowerupEffect extends PlayerPowerupEffect {
     if (isActive) return;
     isActive = true;
     player.moveSpeed = 180;
-    overlay =
-        OverlayEffect(
-            animation: player.runAnimation,
-            position: Vector2(-10, -10),
-          )
-          ..size = Vector2.all(51)
-          ..priority = 10;
-    player.add(overlay!);
+    if (player.runAnimation != null) {
+      overlay =
+          OverlayEffect(
+              animation: player.runAnimation!,
+              position: Vector2(-10, -10),
+            )
+            ..size = Vector2.all(51)
+            ..priority = 10;
+      player.add(overlay!);
+    }
   }
 
   @override
@@ -66,11 +67,13 @@ class TitanPowerupEffect extends PlayerPowerupEffect {
     player.add(
       ScaleEffect.by(Vector2.all(1.5), EffectController(duration: 0.07)),
     );
-    overlay = OverlayEffect(
-      animation: player.titanAnimation,
-      position: Vector2(-4, 4),
-    )..priority = -10;
-    player.add(overlay!);
+    if (player.titanAnimation != null) {
+      overlay = OverlayEffect(
+        animation: player.titanAnimation!,
+        position: Vector2(-4, 4),
+      )..priority = -10;
+      player.add(overlay!);
+    }
   }
 
   @override
@@ -87,22 +90,30 @@ class TitanPowerupEffect extends PlayerPowerupEffect {
 // NO LIMITS POWERUP
 class NoLimitsPowerupEffect extends PlayerPowerupEffect {
   OverlayEffect? overlay;
+  List<RectangleHitbox> removedHitboxes = [];
+  
   NoLimitsPowerupEffect(PlayerComponent player) : super(player);
 
   @override
   void activate() {
     if (isActive) return;
     isActive = true;
-    overlay =
-        OverlayEffect(
-            animation: player.noLimitsAnimation,
-            position: Vector2(-1, -2),
-          )
-          ..size = Vector2.all(35)
-          ..opacity = 0.9;
-    player.add(overlay!);
+    if (player.noLimitsAnimation != null) {
+      overlay =
+          OverlayEffect(
+              animation: player.noLimitsAnimation!,
+              position: Vector2(-1, -2),
+            )
+            ..size = Vector2.all(35)
+            ..opacity = 0.9;
+      player.add(overlay!);
+    }
     player.opacity = 0.8;
-    player.children.whereType<RectangleHitbox>().forEach(player.remove);
+    
+    // Store and remove existing hitboxes
+    removedHitboxes = player.children.whereType<RectangleHitbox>().toList();
+    removedHitboxes.forEach(player.remove);
+    print("NoLimits activated: removed ${removedHitboxes.length} hitboxes");
   }
 
   @override
@@ -112,7 +123,16 @@ class NoLimitsPowerupEffect extends PlayerPowerupEffect {
     overlay?.removeFromParent();
     overlay = null;
     player.opacity = 1.0;
-    player.add(RectangleHitbox()..collisionType = CollisionType.active);
+    
+    // Restore the original hitboxes, or add a default one if none were stored
+    if (removedHitboxes.isNotEmpty) {
+      removedHitboxes.forEach(player.add);
+      print("NoLimits deactivated: restored ${removedHitboxes.length} hitboxes");
+    } else {
+      player.add(RectangleHitbox()..collisionType = CollisionType.active);
+      print("NoLimits deactivated: added default hitbox");
+    }
+    removedHitboxes.clear();
   }
 }
 
@@ -122,18 +142,20 @@ class FlickerPowerupEffect extends PlayerPowerupEffect {
 
   @override
   void activate() {
-    final overlay = OverlayEffect(
-      animation: player.flickerAnimation,
-      position: -player.moveDirection.normalized() * 70,
-    )..size = Vector2.all(15);
-    overlay.removeOnFinish = true;
-    player.add(overlay);
+    if (player.flickerAnimation != null && player.flickerAnimation2 != null) {
+      final overlay = OverlayEffect(
+        animation: player.flickerAnimation!,
+        position: -player.moveDirection.normalized() * 70,
+      )..size = Vector2.all(15);
+      overlay.removeOnFinish = true;
+      player.add(overlay);
 
-    final overlay2 = OverlayEffect(
-      animation: player.flickerAnimation2,
-      position: Vector2(player.moveDirection.x, player.moveDirection.y - 5),
-    )..size = Vector2.all(32);
-    player.add(overlay2);
+      final overlay2 = OverlayEffect(
+        animation: player.flickerAnimation2!,
+        position: Vector2(player.moveDirection.x, player.moveDirection.y - 5),
+      )..size = Vector2.all(32);
+      player.add(overlay2);
+    }
 
     player.add(
       SequenceEffect([
@@ -166,21 +188,21 @@ class PlayerComponent extends SpriteAnimationComponent
   double moveSpeed = 80;
   PlayerDirection playerDirection = PlayerDirection.none;
 
-  late final SpriteAnimation leftAnimation;
-  late final SpriteAnimation rightAnimation;
-  late final SpriteAnimation upAnimation;
-  late final SpriteAnimation downAnimation;
-  late final SpriteAnimation idleAnimation;
-  late final SpriteAnimation runAnimation;
-  late final SpriteAnimation titanAnimation;
-  late final SpriteAnimation flickerAnimation, flickerAnimation2;
-  late final SpriteAnimation noLimitsAnimation;
+  SpriteAnimation? leftAnimation;
+  SpriteAnimation? rightAnimation;
+  SpriteAnimation? upAnimation;
+  SpriteAnimation? downAnimation;
+  SpriteAnimation? idleAnimation;
+  SpriteAnimation? runAnimation;
+  SpriteAnimation? titanAnimation;
+  SpriteAnimation? flickerAnimation, flickerAnimation2;
+  SpriteAnimation? noLimitsAnimation;
 
   bool _loadedAnimations = false;
 
   // Current sprite configuration - this will be set when sprites are loaded
-  String currentSpriteSheet = 'boy_pe.png'; // Default, but will be dynamic
-  
+  String currentSpriteSheet = 'boy_uniform.png'; // Default, but will be dynamic
+
   // Method to get the current player sprite configuration for quest overlay
   PlayerSpriteConfig getCurrentSpriteConfig() {
     return PlayerSpriteConfig(
@@ -192,23 +214,66 @@ class PlayerComponent extends SpriteAnimationComponent
   
   // Method to change the player's sprite sheet (for future outfit system)
   Future<void> changeSpriteSheet(String newSpriteSheet) async {
+    print("Changing sprite sheet from $currentSpriteSheet to $newSpriteSheet");
+    
+    if (currentSpriteSheet == newSpriteSheet) {
+      print("Same sprite sheet, no change needed");
+      return;
+    }
+    
     currentSpriteSheet = newSpriteSheet;
-    _loadedAnimations = false; // Force reload animations
-    await onLoad(); // Reload with new sprite sheet
+    
+    // Store current powerup states before reloading (only if powerups are initialized)
+    bool runActive = false;
+    bool titanActive = false;
+    bool noLimitsActive = false;
+    
+    if (_loadedAnimations) {
+      runActive = runPowerup.isActive;
+      titanActive = titanPowerup.isActive;
+      noLimitsActive = noLimitsPowerup.isActive;
+      
+      // Deactivate all powerups temporarily
+      if (runActive) runPowerup.deactivate();
+      if (titanActive) titanPowerup.deactivate();
+      if (noLimitsActive) noLimitsPowerup.deactivate();
+    }
+    
+    // Check hitbox before removal
+    int hitboxCountBefore = children.whereType<RectangleHitbox>().length;
+    print("Hitboxes before component removal: $hitboxCountBefore");
+    
+    // Remove only specific components, not all children
+    // Remove shadow components specifically (they have a specific priority)
+    children.whereType<RectangleComponent>().where((comp) => comp.priority == -100).forEach(remove);
+    children.whereType<OverlayEffect>().forEach(remove); // Remove any overlay effects
+    
+    // Check hitbox after removal
+    int hitboxCountAfter = children.whereType<RectangleHitbox>().length;
+    print("Hitboxes after component removal: $hitboxCountAfter");
+    
+    // Reset the loaded animations flag
+    _loadedAnimations = false;
+    
+    // Reload animations with new sprite sheet
+    await _loadAnimations();
+    
+    // Restore powerup states if they were active
+    if (runActive) runPowerup.activate();
+    if (titanActive) titanPowerup.activate();
+    if (noLimitsActive) noLimitsPowerup.activate();
+    
+    // Final check on hitbox state
+    int finalHitboxCount = children.whereType<RectangleHitbox>().length;
+    print("Final hitbox count: $finalHitboxCount");
+    
+    print("Sprite sheet change completed successfully");
   }
-
-  // Powerup objects
-  late final RunPowerupEffect runPowerup;
-  late final TitanPowerupEffect titanPowerup;
-  late final NoLimitsPowerupEffect noLimitsPowerup;
-  late final FlickerPowerupEffect flickerPowerup;
-
-  PlayerComponent(this.joystick, this.buttons) : super(size: Vector2.all(32.0));
-
-  @override
-  Future<void> onLoad() async {
-    if (_loadedAnimations) return;
-
+  
+  // Separate method for loading animations to avoid conflicts with onLoad
+  Future<void> _loadAnimations() async {
+    print("Loading animations for sprite sheet: $currentSpriteSheet");
+    
     // SPRITESHEETS TO USE
     final spriteSheet = await game.images.load(currentSpriteSheet);
     final run = await game.images.load('run.png');
@@ -298,11 +363,18 @@ class PlayerComponent extends SpriteAnimationComponent
       to: 20,
     );
 
+    // Set the current animation to idle
     animation = idleAnimation;
 
-    add(RectangleHitbox()..collisionType = CollisionType.active);
+    // Ensure hitbox exists (critical for collision detection)
+    if (children.whereType<RectangleHitbox>().isEmpty) {
+      print("Adding missing hitbox during sprite change");
+      add(RectangleHitbox()..collisionType = CollisionType.active);
+    } else {
+      print("Hitbox already exists, keeping it");
+    }
     
-    // Add shadow effect using HasPaint mixin and custom rendering
+    // Add shadow effect
     final shadowComponent = RectangleComponent(
       size: Vector2(size.x*0.5, size.y * 0.15),
       position: Vector2(size.x*0.25, size.y*0.75),
@@ -313,13 +385,28 @@ class PlayerComponent extends SpriteAnimationComponent
     shadowComponent.priority = -100;
     add(shadowComponent);
 
-    // Initialize powerup objects
+    // Always reinitialize powerup objects with new animations
     runPowerup = RunPowerupEffect(this);
     titanPowerup = TitanPowerupEffect(this);
     noLimitsPowerup = NoLimitsPowerupEffect(this);
     flickerPowerup = FlickerPowerupEffect(this);
 
     _loadedAnimations = true;
+    print("Animations loaded successfully for: $currentSpriteSheet");
+  }
+
+  // Powerup objects
+  late RunPowerupEffect runPowerup;
+  late TitanPowerupEffect titanPowerup;
+  late NoLimitsPowerupEffect noLimitsPowerup;
+  late FlickerPowerupEffect flickerPowerup;
+
+  PlayerComponent(this.joystick, this.buttons) : super(size: Vector2.all(32.0));
+
+  @override
+  Future<void> onLoad() async {
+    if (_loadedAnimations) return;
+    await _loadAnimations();
   }
 
   void setDirection(Vector2 direction) {
@@ -333,7 +420,15 @@ class PlayerComponent extends SpriteAnimationComponent
   void update(double dt) {
     super.update(dt);
 
-    if (!_loadedAnimations) return;
+    if (!_loadedAnimations || idleAnimation == null) return;
+
+    // Disable movement when closet overlay is active
+    if (game.isClosetActive) {
+      animation = idleAnimation;
+      moveDirection = Vector2.zero();
+      playerDirection = PlayerDirection.none;
+      return;
+    }
 
     previousPosition.setFrom(position);
 
@@ -344,19 +439,19 @@ class PlayerComponent extends SpriteAnimationComponent
       
       switch (playerDirection) {
         case PlayerDirection.left:
-          animation = leftAnimation;
+          if (leftAnimation != null) animation = leftAnimation;
           dirX -= moveSpeed;
           break;
         case PlayerDirection.right:
-          animation = rightAnimation;
+          if (rightAnimation != null) animation = rightAnimation;
           dirX += moveSpeed;
           break;
         case PlayerDirection.up:
-          animation = upAnimation;
+          if (upAnimation != null) animation = upAnimation;
           dirY -= moveSpeed;
           break;
         case PlayerDirection.down:
-          animation = downAnimation;
+          if (downAnimation != null) animation = downAnimation;
           dirY += moveSpeed;
           break;
         case PlayerDirection.none:
@@ -601,10 +696,10 @@ class PlayerComponent extends SpriteAnimationComponent
   }
 
   void _showIndicator() {
-    if (children.whereType<_Indicator>().isEmpty) {
+    if (children.whereType<_Indicator>().isEmpty && idleAnimation != null) {
       final initialDirection = _dashDirection.isZero() ? Vector2(1, 0) : _dashDirection;
       final indicatorOffset = initialDirection.normalized() * 74;
-      add(_Indicator(animation: idleAnimation, offset: indicatorOffset));
+      add(_Indicator(animation: idleAnimation!, offset: indicatorOffset));
     }
   }
   
