@@ -5,6 +5,8 @@ import 'package:bsuniverse/game/components/mute_button_component.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
 import 'package:bsuniverse/game/setup/abb.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
+import 'package:bsuniverse/game/data/popup_configs.dart';
+import 'package:bsuniverse/game/data/player_data.dart';
 // Setup imports
 import 'package:bsuniverse/game/setup/facade.dart';
 import 'package:bsuniverse/game/setup/bedroom.dart';
@@ -34,6 +36,7 @@ import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 
 // Color scheme
 final Color pixelGold = Color.fromRGBO(255, 215, 0, 1.0);
@@ -219,6 +222,9 @@ class BSUniverseGame extends FlameGame
   Scene? currentScene;
   CameraComponent? currentCamera;
 
+  // Player data management
+  final PlayerData playerData = PlayerData();
+
   // Portal system for tracking room transitions
   Vector2? lastPortalPosition;
   GoTo? lastMap;
@@ -364,7 +370,7 @@ class BSUniverseGame extends FlameGame
     if (sceneName == GoTo.map) {
       playerSpeed = 40.0;
     }
-    Scene newScene = Scene(sceneName: sceneName);
+    Scene newScene = Scene(sceneName: sceneName, game: this);
     await newScene.initialize();
     print(newScene.sceneMap);
     currentScene = newScene;
@@ -446,6 +452,26 @@ class BSUniverseGame extends FlameGame
     overlays.remove('QuestOverlay');
     isQuestActive = false;
   }
+
+  // Handle quest completion (called from game screen)
+  void completeCurrentQuest(int coinsEarned, int correctAnswers, int totalQuestions) {
+    if (_currentActiveQuestId != null) {
+      if (coinsEarned >= 0) {
+        // Quest succeeded
+        playerData.completeQuest(_currentActiveQuestId!, coinsEarned, correctAnswers, totalQuestions);
+      } else {
+        // Quest failed
+        playerData.failQuest(_currentActiveQuestId!, -coinsEarned);
+      }
+      _currentActiveQuestId = null; // Clear current quest
+    }
+  }
+
+  // Get current player coins for UI display
+  int get playerCoins => playerData.coins;
+
+  // Get player summary for menu display
+  PlayerSummary get playerSummary => playerData.getSummary();
 
   // Quest state management
   void showQuestResultOverlay(bool isSuccess) {
@@ -529,6 +555,67 @@ class BSUniverseGame extends FlameGame
   void hideMenuScreen() {
     overlays.remove('MenuScreen');
   }
+
+  // Quest dialogue overlay controls
+  void showQuestDialogue(PopupConfig questConfig) {
+    overlays.add('QuestDialogue');
+    // Store quest config for overlay access
+    _currentQuestConfig = questConfig;
+  }
+
+  void hideQuestDialogue() {
+    overlays.remove('QuestDialogue');
+    _currentQuestConfig = null;
+  }
+
+  void onQuestAccepted(PopupConfig questConfig) {
+    // Handle quest acceptance using player data system
+    playerData.acceptQuest(
+      questConfig.id,
+      questConfig.questTitle,
+      questConfig.location,
+      questConfig.coinsReward,
+      questConfig.coinsPenalty,
+    );
+    
+    // Store the current quest ID for completion tracking
+    _currentActiveQuestId = questConfig.id;
+    
+    hideQuestDialogue();
+    
+    // Start the actual quest with randomized questions
+    showQuestOverlay();
+  }
+
+  void onQuestDeclined(PopupConfig questConfig) {
+    // Handle quest decline using player data system
+    playerData.declineQuest(questConfig.id);
+    
+    hideQuestDialogue();
+  }
+
+  // Task discovery notification
+  void showTaskDiscoveryNotification(int taskCount) {
+    overlays.add('TaskDiscovery');
+    _discoveredTaskCount = taskCount;
+  }
+
+  void hideTaskDiscoveryNotification() {
+    overlays.remove('TaskDiscovery');
+    _discoveredTaskCount = 0;
+  }
+
+  // Store current quest config for overlay access
+  PopupConfig? _currentQuestConfig;
+  PopupConfig? get currentQuestConfig => _currentQuestConfig;
+
+  // Store discovered task count
+  int _discoveredTaskCount = 0;
+  int get discoveredTaskCount => _discoveredTaskCount;
+
+  // Store current active quest ID for completion tracking
+  String? _currentActiveQuestId;
+  String? get currentActiveQuestId => _currentActiveQuestId;
 }
 
 // Portal Component that handles scene transitions
@@ -588,6 +675,10 @@ class Popup extends SpriteComponent
   final String location;
   final String dialogue;
   final String image;
+  final String questTitle;
+  final String questDescription;
+  final int coinsReward;
+  final int coinsPenalty;
   final VoidCallback onInteract;
   bool _hasTriggered = false;
 
@@ -597,6 +688,10 @@ class Popup extends SpriteComponent
   required this.location,
   required this.dialogue,
   required this.image,
+  required this.questTitle,
+  required this.questDescription,
+  this.coinsReward = 5,
+  this.coinsPenalty = 2,
   required this.onInteract,
   }) : super(
      position: position,
@@ -625,29 +720,27 @@ class Popup extends SpriteComponent
 
   if (!_hasTriggered) {
     _hasTriggered = true;
-    print(location);
-    game.showQuestOverlay();
+    print('Popup triggered at $location');
+    
+    // Show quest dialogue instead of quest overlay
+    onInteract();
 
     // Remove collision hitbox to prevent further triggers
     removeAll(children.whereType<RectangleHitbox>());
     sprite = null;
-    
-    // Schedule overlay closure after a delay
-    if (!game.isQuestActive) {
-    game.hideQuestOverlay();
-    }
   }
   }
 }
 
 class Scene extends World {
   final GoTo sceneName;
+  final BSUniverseGame game;
   TiledComponent? sceneMap;
   Vector2? playerSpawnPosition;
   double? zoom;
   int? width;
   int? height;
-  Scene({required this.sceneName});
+  Scene({required this.sceneName, required this.game});
 
   Future<void> initialize() async {
     switch (sceneName) {
@@ -831,28 +924,55 @@ class Scene extends World {
   }
 
   Future<void> _setUpPopups(TiledComponent map) async {
-    // Handles Popups group folder, with subgroups 1st, 2nd, etc.
+    // Get the current scene name to determine popup count and type
+    final sceneNameStr = sceneName.name.toLowerCase(); // Use .name to get enum string
+    
+    // Get popup configurations for this scene
+    final popupConfigs = PopupConfigs.getPopupsForScene(sceneNameStr);
+    
+    // Get available popup positions from TMX file
     final popupsGroup = map.tileMap.getLayer<Group>('Popups');
-    if (popupsGroup != null) {
-      // final random = Random(DateTime.now().millisecondsSinceEpoch);
-
+    if (popupsGroup != null && popupConfigs.isNotEmpty) {
+      final availablePositions = <TiledObject>[];
+      
+      // Collect all available popup positions
       for (final subGroup in popupsGroup.layers.whereType<ObjectGroup>()) {
-        for (final obj in subGroup.objects) {
-          // Randomize popup spawn with 50% chance
-
+        availablePositions.addAll(subGroup.objects);
+      }
+      
+      if (availablePositions.isNotEmpty) {
+        // Shuffle positions for randomness
+        availablePositions.shuffle();
+        
+        // Create popups up to the number of available positions or configs
+        final maxPopups = math.min(popupConfigs.length, availablePositions.length);
+        
+        for (int i = 0; i < maxPopups; i++) {
+          final config = popupConfigs[i];
+          final position = availablePositions[i];
+          
           final popup = Popup(
-            position: Vector2(obj.x, obj.y),
-            size: Vector2(obj.width, obj.height),
-            location: obj.properties.getValue('location') ?? 'Unknown Location',
-            dialogue: obj.properties.getValue('dialogue') ?? 'Hello there!',
-            image: obj.properties.getValue('image') ?? 'sirt.png',
+            position: Vector2(position.x, position.y),
+            size: Vector2(position.width, position.height),
+            location: config.location,
+            dialogue: config.dialogue,
+            questTitle: config.questTitle,
+            questDescription: config.questDescription,
+            coinsReward: config.coinsReward,
+            coinsPenalty: config.coinsPenalty,
+            image: config.image,
             onInteract: () {
-              // Handle popup interaction - could show quest overlay or dialogue
-              print('Interacting with popup at ${obj.name}');
+              // Show quest dialogue overlay
+              game.showQuestDialogue(config);
             },
           );
 
           map.add(popup);
+        }
+        
+        // Show task discovery notification
+        if (maxPopups > 0) {
+          game.showTaskDiscoveryNotification(maxPopups);
         }
       }
     }

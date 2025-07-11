@@ -4,6 +4,7 @@ import '../game/bsuniverse.dart';
 import '../widgets/loading_screen.dart';
 import '../game/widgets/quest_overlay.dart';
 import '../game/components/menu_screen.dart';
+import '../game/widgets/quest_dialogue_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -84,6 +85,9 @@ class _GameScreenState extends State<GameScreen> {
       _lastQuestCoins = coinsEarned;
       _lastCorrectAnswers = correctAnswers;
       _lastQuestSuccess = coinsEarned >= 0;
+      
+      // Update player data with quest completion
+      _game.completeCurrentQuest(coinsEarned, correctAnswers, 3); // 3 questions total
       
       // Generate new random quest for next time
       _generateRandomQuest();
@@ -237,6 +241,16 @@ class _GameScreenState extends State<GameScreen> {
         'MenuScreen': (context, game) => MenuScreenOverlay(
               game: game,
               onClose: () => game.hideMenuScreen(),
+            ),
+        'QuestDialogue': (context, game) => QuestDialogueOverlay(
+              questConfig: game.currentQuestConfig!,
+              onAccept: () => game.onQuestAccepted(game.currentQuestConfig!),
+              onDecline: () => game.onQuestDeclined(game.currentQuestConfig!),
+              onClose: () => game.hideQuestDialogue(),
+            ),
+        'TaskDiscovery': (context, game) => TaskDiscoveryNotification(
+              taskCount: game.discoveredTaskCount,
+              onComplete: () => game.hideTaskDiscoveryNotification(),
             ),
       },
       initialActiveOverlays: const [],

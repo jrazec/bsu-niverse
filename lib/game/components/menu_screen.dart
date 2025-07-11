@@ -78,10 +78,10 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
   }
 
   void _loadGameData() {
-    // Load current coins from game state (using default for now)
-    _currentCoins = 100; // Default starting coins
+    // Load current coins from player data
+    _currentCoins = widget.game.playerCoins;
     
-    // Load active tasks from current popups
+    // Load active tasks from current popups and player data
     _loadActiveTasks();
     
     // Load sound volume from game settings
@@ -93,22 +93,42 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
   void _loadActiveTasks() {
     _activeTasks.clear();
     
-    // Get popups from current scene
+    // Load active quests from player data system
+    final activeQuests = widget.game.playerData.activeQuests.values.toList();
+    for (final quest in activeQuests) {
+      _activeTasks.add(ActiveTask(
+        id: quest.id,
+        title: quest.title,
+        description: 'Accepted quest: ${quest.title}',
+        location: quest.location,
+        building: quest.building,
+        isCompleted: false, // Active quests are by definition not completed
+        popup: null, // No popup needed for active quests
+      ));
+    }
+    
+    // Also get popups from current scene for available (non-accepted) tasks
     if (widget.game.currentScene?.sceneMap != null) {
       final scene = widget.game.currentScene!;
       
       // Find popup components in the current scene
       scene.sceneMap!.children.whereType<Popup>().forEach((popup) {
-        final buildingFromLocation = _getBuildingFromLocation(popup.location);
-        _activeTasks.add(ActiveTask(
-          id: popup.hashCode.toString(),
-          title: _generateTaskTitle(popup.dialogue),
-          description: popup.dialogue,
-          location: popup.location,
-          building: buildingFromLocation,
-          isCompleted: _isTaskCompleted(buildingFromLocation, popup.hashCode.toString()),
-          popup: popup,
-        ));
+        // Only show if this quest hasn't been accepted, completed, or declined
+        final playerData = widget.game.playerData;
+        if (!playerData.isQuestActive(popup.questTitle) && 
+            !playerData.isQuestCompleted(popup.questTitle) && 
+            !playerData.isQuestDeclined(popup.questTitle)) {
+          final buildingFromLocation = _getBuildingFromLocation(popup.location);
+          _activeTasks.add(ActiveTask(
+            id: popup.questTitle,
+            title: popup.questTitle,
+            description: popup.dialogue,
+            location: popup.location,
+            building: buildingFromLocation,
+            isCompleted: false,
+            popup: popup,
+          ));
+        }
       });
     }
     
@@ -126,15 +146,6 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
     }
   }
 
-  String _generateTaskTitle(String dialogue) {
-    // Generate a short title from dialogue
-    List<String> words = dialogue.split(' ');
-    if (words.length > 3) {
-      return '${words[0]} ${words[1]} ${words[2]}...';
-    }
-    return dialogue.length > 30 ? '${dialogue.substring(0, 30)}...' : dialogue;
-  }
-
   String _getBuildingFromLocation(String location) {
     location = location.toLowerCase();
     if (location.contains('gzb') || location.contains('gonzales')) return 'gzb';
@@ -144,17 +155,12 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
     return 'other';
   }
 
-  bool _isTaskCompleted(String building, String taskId) {
-    // Check if this task has been marked as completed
-    // You can implement more sophisticated tracking here
-    return false; // For now, return false - tasks start as incomplete
-  }
-
   void _incrementCoins(int amount) {
     setState(() {
       _currentCoins += amount;
     });
-    // Note: Game doesn't have playerCoins property yet
+    // Update game player data as well
+    widget.game.playerData.addCoins(amount);
   }
 
   void _decrementCoins(int amount) {
