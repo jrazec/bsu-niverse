@@ -1,10 +1,20 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
+import 'package:bsuniverse/game/setup/get_arguments.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 
 void setUpGymn(TiledComponent map) {
-  // TODO: Implement Gymnasium portal setup
-  // Add portals for gymnasium
+ 
+  final List<Portal> gym = [
+    Portal(
+      map: map,
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      selection: FloorList(goOut: true),
+    ),
+  ];
+
+  loopThroughPortals(gym, map);
 }

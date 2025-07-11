@@ -63,13 +63,15 @@ final Map<String, Map<String, dynamic>> tmxConfig = {
   "vmbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 13, "h": 9},
   "abbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "gzbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
-  "library": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
-  "canteen": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "libraryRoom": {"image": "Library.tmx", "zoom": 4.0, "w": 17, "h": 9},
+  "canteen": {"image": "canteenldc.tmx", "zoom": 4.0, "w": 10, "h": 10},
 };
 
 class FloorList {
   RoomList? floor1, floor2, floor3, floor4, floor5;
   bool? goOut, goIn;
+  Vector2? leaveRoomSpawnPoint;
+  GoTo? leaveRoomMap;
   FloorList({
     this.floor1,
     this.floor2,
@@ -78,6 +80,8 @@ class FloorList {
     this.floor5,
     this.goIn,
     this.goOut,
+    this.leaveRoomSpawnPoint,
+    this.leaveRoomMap,
   });
 
   List<String> getActivePortals() {
@@ -189,6 +193,10 @@ enum GoTo {
   facade,
 }
 
+  // Portal system for tracking room transitions
+  Vector2? lastPortalPosition;
+  GoTo? lastMap;
+
 // ---------------------MAIN GAME-----------------------
   double height = 60;
   double width = 60;
@@ -204,6 +212,13 @@ class BSUniverseGame extends FlameGame
   late final GameSoundManager soundManager;
   Scene? currentScene;
   CameraComponent? currentCamera;
+  
+  // Portal system for tracking room transitions
+  Vector2? lastPortalPosition;
+  GoTo? lastMap;
+  FloorList? lastPortalSelection;
+
+
 
   // Button components
   late final StatusButtonComponent buttonA;
@@ -298,12 +313,13 @@ class BSUniverseGame extends FlameGame
         size: muteButtonSize,
       );
 
-      // // player.debugMode = true;
-      // player.debugColor = Colors.white;
       // player.debugMode = true;
+      player.debugColor = Colors.white;
+      player.debugMode = true;
 
-      // debugMode = true;
+      debugMode = true;
       await changeScene(GoTo.bedroom, Vector2(104, 66));
+      
 
       // Add UI components
 
@@ -321,6 +337,7 @@ class BSUniverseGame extends FlameGame
   Future<void> changeScene(GoTo sceneName, Vector2 position) async {
     // Position Will Be removed as parameter and be set in here.
     // Remove current world/scene if any
+    print("CURRENT SCENE $lastMap, $lastPortalPosition");
     if (currentScene != null) {
       remove(currentCamera!);
       remove(currentScene!); // Remove the entire old Scene (World) component
@@ -430,7 +447,21 @@ class Portal extends RectangleComponent
     PositionComponent other,
   ) async {
     super.onCollision(intersectionPoints, other);
+    
+    // Store portal information for return journey
+    print("leave room spawnpoint ${selection.leaveRoomSpawnPoint}");
+    lastPortalPosition = selection.leaveRoomSpawnPoint;
+    lastMap = _getCurrentMap();
+    
     await game.changeScene(destination, startingPosition);
+  }
+  
+  GoTo _getCurrentMap() {
+    // Determine current map based on the current scene
+    if (game.currentScene?.sceneName != null) {
+      return game.currentScene!.sceneName;
+    }
+    return GoTo.map; // fallback
   }
 }
 

@@ -4,16 +4,15 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
 void setUpGzbRoom(TiledComponent map) {
-  // TODO: Implement GZB room portal setup
-  // Add portals for GZB general room
-  final List<Portal> gzbRoomPortals = [
+    
+  final List<Portal> gzbRoom = [
     Portal(
       map: map,
-      destination: GoTo.gzb,
-      startingPosition: Vector2(0, 0),
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
       selection: FloorList(goOut: true),
     ),
   ];
 
-  loopThroughPortals(gzbRoomPortals, map);
+  loopThroughPortals(gzbRoom, map);
 }

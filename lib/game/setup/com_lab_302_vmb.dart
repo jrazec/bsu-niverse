@@ -1,10 +1,17 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
-import 'package:flame/collisions.dart';
+import 'package:bsuniverse/game/setup/get_arguments.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
 
 void setUpComLab302Vmb(TiledComponent map) {
-  // TODO: Implement Computer Lab 302 VMB portal setup
-  // Add portals for Computer Lab 302 in VMB
+    final List<Portal> comLab302VMBRoom = [
+    Portal(
+      map: map,
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      selection: FloorList(goOut: true),
+    ),
+  ];
+
+  loopThroughPortals(comLab302VMBRoom, map);
 }

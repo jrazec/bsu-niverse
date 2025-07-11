@@ -9,7 +9,7 @@ void setUpMapBsu(TiledComponent map) {
   // TODO: Implement MapBsu portal setup
   // Add portals for main campus map
   final List<Portal> mapPortals = [
-    // GOING FACADE: IN 
+    // GOING FACADE: IN
     Portal(
       map: map,
       destination: GoTo.facade, //facade
@@ -45,10 +45,15 @@ void setUpMapBsu(TiledComponent map) {
     Portal(
       map: map,
       destination: GoTo.vmb,
-      startingPosition: Vector2(267, 1144),
+      startingPosition: Vector2(960, 1095),
+      selection: FloorList(floor1: RoomList.d8),
+    ),
+    Portal(
+      map: map,
+      destination: GoTo.vmb,
+      startingPosition: Vector2(960, 1120),
       selection: FloorList(floor1: RoomList.d3),
     ),
-
 
     // GZB
     Portal(

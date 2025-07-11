@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="108">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="17" nextobjectid="110">
  <tileset firstgid="1" source="map.tsx"/>
  <layer id="14" name="WaALLLL" width="40" height="30">
   <data encoding="csv">
@@ -202,6 +202,7 @@
    <object id="99" name="d5" x="576.192" y="199.812" width="10.0963" height="15.7314"/>
    <object id="102" name="d6" x="711.669" y="485.795" width="22.5405" height="43.2026"/>
    <object id="105" name="d7" x="840.871" y="452.261" width="18.7605" height="44.8911"/>
+   <object id="108" name="d8" x="512.14" y="259.836" width="31.7398" height="8.6074"/>
   </objectgroup>
  </group>
  <objectgroup id="11" name="upCharac">

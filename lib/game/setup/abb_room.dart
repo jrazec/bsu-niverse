@@ -1,10 +1,17 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
-import 'package:flame/collisions.dart';
+import 'package:bsuniverse/game/setup/get_arguments.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
 
 void setUpAbbRoom(TiledComponent map) {
-  // TODO: Implement ABB room portal setup
-  // Add portals for ABB general room
+   final List<Portal> abbRoom = [
+    Portal(
+      map: map,
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      selection: FloorList(goOut: true),
+    ),
+  ];
+
+  loopThroughPortals(abbRoom, map);
 }

@@ -1,10 +1,18 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
-import 'package:flame/collisions.dart';
+import 'package:bsuniverse/game/setup/get_arguments.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
 
 void setUpComLab502Lsb(TiledComponent map) {
-  // TODO: Implement Computer Lab 502 LSB portal setup
-  // Add portals for Computer Lab 502 in LSB
+  // Get the game instance to access stored portal information
+   final List<Portal> comLab502LSBRoom = [
+    Portal(
+      map: map,
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      selection: FloorList(goOut: true),
+    ),
+  ];
+
+  loopThroughPortals(comLab502LSBRoom, map);
 }

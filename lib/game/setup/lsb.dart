@@ -37,13 +37,21 @@ void setUpLsb(TiledComponent map) {
       map: map,
       destination: GoTo.genRoomLSB,
       startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d2),
+      selection: FloorList(
+        floor5: RoomList.d2,
+        leaveRoomSpawnPoint: Vector2(255, 95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
     Portal(
       map: map,
       destination: GoTo.genRoomLSB,
-      startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d3),
+      startingPosition: Vector2(315, 163),
+      selection: FloorList(
+        floor5: RoomList.d3,
+        leaveRoomSpawnPoint: Vector2(445, 95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
 
     // COMLAB 1
@@ -51,13 +59,21 @@ void setUpLsb(TiledComponent map) {
       map: map,
       destination: GoTo.comLab502LSB,
       startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d4),
+      selection: FloorList(
+        floor5: RoomList.d4,
+        leaveRoomSpawnPoint: Vector2(570, 95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
     Portal(
       map: map,
       destination: GoTo.comLab502LSB,
-      startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d5),
+      startingPosition: Vector2(315, 163),
+      selection: FloorList(
+        floor5: RoomList.d5,
+        leaveRoomSpawnPoint: Vector2(705,95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
 
     // COMLAB2
@@ -65,13 +81,21 @@ void setUpLsb(TiledComponent map) {
       map: map,
       destination: GoTo.comLab503LSB,
       startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d6),
+      selection: FloorList(
+        floor5: RoomList.d6,
+        leaveRoomSpawnPoint: Vector2(770, 95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
     Portal(
       map: map,
       destination: GoTo.comLab503LSB,
-      startingPosition: Vector2(74, 163),
-      selection: FloorList(floor5: RoomList.d7),
+      startingPosition: Vector2(315, 163),
+      selection: FloorList(
+        floor5: RoomList.d7,
+        leaveRoomSpawnPoint: Vector2(960,95), // When leaving room, spawn here
+        leaveRoomMap: GoTo.lsb, // Return to LSB map
+      ),
     ),
   ];
 

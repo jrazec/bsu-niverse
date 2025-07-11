@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="26" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="8">
+ <tileset firstgid="1" source="canteenldc.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="26" height="9">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,0,0,0,
+0,0,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,0,0,0,
+0,0,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,0,0,0,
+0,0,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,0,0,0,
+0,0,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="Collisions">
+  <object id="1" x="27" y="52" width="32" height="181"/>
+  <object id="2" x="28" y="229" width="737" height="32"/>
+  <object id="3" x="736" y="64" width="32" height="192"/>
+  <object id="5" x="683" y="66" width="55" height="156"/>
+  <object id="6" x="28" y="27" width="740" height="32"/>
+ </objectgroup>
+ <objectgroup id="4" name="out">
+  <object id="7" x="614.975" y="217.961" width="56.7731" height="10.3224"/>
+ </objectgroup>
+</map>

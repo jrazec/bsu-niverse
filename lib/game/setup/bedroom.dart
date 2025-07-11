@@ -12,8 +12,7 @@ import 'package:flutter/material.dart';
 // PORTALS
 
 void setUpBedroom(TiledComponent map) {
-  // TODO: Implement LSB portal setup
-  // Add portals for LSB building
+
 
   // Portal(floorList:FloorList.f1,roomList: RoomList.d1,position: Vector2(obj.x, obj.y), size: Vector2(obj.width, obj.height), destination: GoTo.gzb)
   // ..position for obj.x and obj.y; same with size

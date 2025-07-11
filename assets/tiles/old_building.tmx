@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="45" height="44" tilewidth="32" tileheight="32" infinite="0" nextlayerid="31" nextobjectid="500">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="45" height="44" tilewidth="32" tileheight="32" infinite="0" nextlayerid="32" nextobjectid="501">
  <tileset firstgid="1" source="hallway.tsx"/>
  <tileset firstgid="157" source="test.tsx"/>
  <group id="15" name="OB">
@@ -1042,5 +1042,8 @@
   <object id="446" x="135.3" y="1337.03" width="12.0852" height="5.72834"/>
   <object id="429" x="32" y="1376" width="320" height="32"/>
   <object id="433" x="352" y="1312" width="1056" height="96"/>
+ </objectgroup>
+ <objectgroup id="31" name="out">
+  <object id="500" x="191.163" y="1374.19" width="49.4676" height="12.5765"/>
  </objectgroup>
 </map>

@@ -1,10 +1,18 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
-import 'package:flame/collisions.dart';
+import 'package:bsuniverse/game/setup/get_arguments.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
 
 void setUpGymnOpenArea(TiledComponent map) {
-  // TODO: Implement Gymnasium open area portal setup
-  // Add portals for gymnasium open area
+    // Create exit portal that returns to the originating map and position
+  final List<Portal> gymnOpenArea = [
+    Portal(
+      map: map,
+      destination: lastMap ?? GoTo.map, 
+      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      selection: FloorList(goOut: true),
+    ),
+  ];
+
+  loopThroughPortals(gymnOpenArea, map);
 }
