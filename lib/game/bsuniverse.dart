@@ -410,6 +410,11 @@ class BSUniverseGame extends FlameGame
       ),
     );
     await add(currentCamera!);
+    // Show loading overlay for 1.5 seconds
+    overlays.add('SpartanLoading');
+    await Future.delayed(Duration(milliseconds: 250));
+    overlays.remove('SpartanLoading');
+    
   }
 
   // Method to update button positions on screen resize
@@ -1046,7 +1051,7 @@ class Scene extends World {
           final position = availablePositions[i];
           
           final popup = Popup(
-            position: Vector2(position.x, position.y),
+            position: Vector2(position.x, position.y - 32),
             size: Vector2(position.width, position.height),
             location: config.location,
             dialogue: config.dialogue,

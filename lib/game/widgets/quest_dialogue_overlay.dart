@@ -419,60 +419,64 @@ class _TaskDiscoveryNotificationState extends State<TaskDiscoveryNotification>
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: Positioned(
-        top: 80,
-        left: 20,
-        right: 20,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([_fadeAnimation, _slideAnimation]),
-          builder: (context, child) {
-            return SlideTransition(
-              position: _slideAnimation,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: ashMaroon,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: pixelGold, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: charcoalBlack.withOpacity(0.5),
-                        offset: const Offset(0, 4),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.search,
-                        color: pixelGold,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          '${widget.taskCount} task${widget.taskCount > 1 ? 's' : ''} discovered!',
-                          style: TextStyle(
-                            fontFamily: 'VT323',
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: championWhite,
+      child: Stack(  // Add Stack wrapper here
+        children: [
+          Positioned(
+            top: 80,
+            left: 20,
+            right: 20,
+            child: AnimatedBuilder(
+              animation: Listenable.merge([_fadeAnimation, _slideAnimation]),
+              builder: (context, child) {
+                return SlideTransition(
+                  position: _slideAnimation,
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: ashMaroon,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: pixelGold, width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: charcoalBlack.withOpacity(0.5),
+                            offset: const Offset(0, 4),
+                            blurRadius: 8,
                           ),
-                          textAlign: TextAlign.center,
-                        ),
+                        ],
                       ),
-                    ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.search,
+                            color: pixelGold,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              '${widget.taskCount} task${widget.taskCount > 1 ? 's' : ''} discovered!',
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: championWhite,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

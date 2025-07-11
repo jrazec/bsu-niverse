@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="197">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="197">
  <tileset firstgid="1" source="test.tsx"/>
  <tileset firstgid="2" source="comlabheb.tsx"/>
  <layer id="1" name="Tile Layer 1" width="13" height="9">
@@ -15,7 +15,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="2" name="Collision">
+ <objectgroup id="2" name="Collisions">
   <object id="2" x="63.6667" y="63.6667" width="288" height="10.6667"/>
   <object id="3" x="56.451" y="65.451" width="6" height="160"/>
   <object id="4" x="352.745" y="62.9412" width="6.33333" height="169.392"/>
@@ -38,41 +38,43 @@
   <object id="185" x="138.57" y="148" width="0.5" height="3"/>
   <object id="190" x="138.57" y="111" width="0.5" height="3"/>
  </objectgroup>
- <objectgroup id="3" name="1st">
-  <object id="56" name="1" gid="1" x="150.557" y="133.477" width="32" height="32"/>
-  <object id="57" name="1" gid="1" x="207.579" y="208.831" width="32" height="32"/>
-  <object id="58" name="1" gid="1" x="240.81" y="208.212" width="32" height="32"/>
-  <object id="59" name="1" gid="1" x="278.534" y="209.432" width="32" height="32"/>
-  <object id="60" name="1" gid="1" x="108.154" y="133.313" width="32" height="32"/>
-  <object id="61" name="1" gid="1" x="127.716" y="144.75" width="32" height="32"/>
-  <object id="62" name="1" gid="1" x="127.966" y="182.5" width="32" height="32"/>
-  <object id="63" name="1" gid="1" x="139.921" y="207.66" width="32" height="32"/>
-  <object id="64" name="1" gid="1" x="129.091" y="106.875" width="32" height="32"/>
-  <object id="65" name="1" gid="1" x="166.341" y="106.875" width="32" height="32"/>
-  <object id="66" name="1" gid="1" x="170.5" y="144.5" width="32" height="32"/>
-  <object id="67" name="1" gid="1" x="214" y="107.125" width="32" height="32"/>
-  <object id="68" name="1" gid="1" x="255.75" y="107" width="32" height="32"/>
-  <object id="69" name="1" gid="1" x="212.75" y="144.5" width="32" height="32"/>
-  <object id="70" name="1" gid="1" x="255.25" y="145" width="32" height="32"/>
-  <object id="71" name="1" gid="1" x="192" y="171.25" width="32" height="32"/>
-  <object id="72" name="1" gid="1" x="139.779" y="228.005" width="32" height="32"/>
-  <object id="73" name="1" gid="1" x="148.75" y="170" width="32" height="32"/>
-  <object id="74" name="1" gid="1" x="192.25" y="132.25" width="32" height="32"/>
-  <object id="75" name="1" gid="1" x="233.75" y="172" width="32" height="32"/>
-  <object id="76" name="1" gid="1" x="234.477" y="129.727" width="32" height="32"/>
-  <object id="77" name="1" gid="1" x="277.75" y="170.25" width="32" height="32"/>
-  <object id="78" name="1" gid="1" x="283.75" y="132.25" width="32" height="32"/>
-  <object id="85" name="1" gid="1" x="170.167" y="183.339" width="32" height="32"/>
-  <object id="87" name="1" gid="1" x="214" y="182.5" width="32" height="32"/>
-  <object id="88" name="1" gid="1" x="255.25" y="182.75" width="32" height="32"/>
-  <object id="93" name="1" gid="1" x="173.011" y="207.886" width="32" height="32"/>
-  <object id="94" name="1" gid="1" x="214" y="217.364" width="32" height="32"/>
-  <object id="95" name="1" gid="1" x="255.636" y="217.091" width="32" height="32"/>
-  <object id="101" name="1" gid="1" x="302.333" y="159" width="32" height="32"/>
-  <object id="103" name="1" gid="1" x="102.061" y="167.455" width="32" height="32"/>
-  <object id="105" name="1" gid="1" x="84" y="207.091" width="32" height="32"/>
-  <object id="106" name="1" gid="1" x="76.7273" y="112" width="32" height="32"/>
- </objectgroup>
+ <group id="9" name="Popups">
+  <objectgroup id="3" name="1st">
+   <object id="56" name="1" gid="1" x="150.557" y="133.477" width="32" height="32"/>
+   <object id="57" name="1" gid="1" x="207.579" y="208.831" width="32" height="32"/>
+   <object id="58" name="1" gid="1" x="240.81" y="208.212" width="32" height="32"/>
+   <object id="59" name="1" gid="1" x="278.534" y="209.432" width="32" height="32"/>
+   <object id="60" name="1" gid="1" x="108.154" y="133.313" width="32" height="32"/>
+   <object id="61" name="1" gid="1" x="127.716" y="144.75" width="32" height="32"/>
+   <object id="62" name="1" gid="1" x="127.966" y="182.5" width="32" height="32"/>
+   <object id="63" name="1" gid="1" x="139.921" y="207.66" width="32" height="32"/>
+   <object id="64" name="1" gid="1" x="129.091" y="106.875" width="32" height="32"/>
+   <object id="65" name="1" gid="1" x="166.341" y="106.875" width="32" height="32"/>
+   <object id="66" name="1" gid="1" x="170.5" y="144.5" width="32" height="32"/>
+   <object id="67" name="1" gid="1" x="214" y="107.125" width="32" height="32"/>
+   <object id="68" name="1" gid="1" x="255.75" y="107" width="32" height="32"/>
+   <object id="69" name="1" gid="1" x="212.75" y="144.5" width="32" height="32"/>
+   <object id="70" name="1" gid="1" x="255.25" y="145" width="32" height="32"/>
+   <object id="71" name="1" gid="1" x="192" y="171.25" width="32" height="32"/>
+   <object id="72" name="1" gid="1" x="139.779" y="228.005" width="32" height="32"/>
+   <object id="73" name="1" gid="1" x="148.75" y="170" width="32" height="32"/>
+   <object id="74" name="1" gid="1" x="192.25" y="132.25" width="32" height="32"/>
+   <object id="75" name="1" gid="1" x="233.75" y="172" width="32" height="32"/>
+   <object id="76" name="1" gid="1" x="234.477" y="129.727" width="32" height="32"/>
+   <object id="77" name="1" gid="1" x="277.75" y="170.25" width="32" height="32"/>
+   <object id="78" name="1" gid="1" x="283.75" y="132.25" width="32" height="32"/>
+   <object id="85" name="1" gid="1" x="170.167" y="183.339" width="32" height="32"/>
+   <object id="87" name="1" gid="1" x="214" y="182.5" width="32" height="32"/>
+   <object id="88" name="1" gid="1" x="255.25" y="182.75" width="32" height="32"/>
+   <object id="93" name="1" gid="1" x="173.011" y="207.886" width="32" height="32"/>
+   <object id="94" name="1" gid="1" x="214" y="217.364" width="32" height="32"/>
+   <object id="95" name="1" gid="1" x="255.636" y="217.091" width="32" height="32"/>
+   <object id="101" name="1" gid="1" x="302.333" y="159" width="32" height="32"/>
+   <object id="103" name="1" gid="1" x="102.061" y="167.455" width="32" height="32"/>
+   <object id="105" name="1" gid="1" x="84" y="207.091" width="32" height="32"/>
+   <object id="106" name="1" gid="1" x="76.7273" y="112" width="32" height="32"/>
+  </objectgroup>
+ </group>
  <objectgroup id="5" name="Spawn">
   <object id="109" x="308.667" y="191">
    <point/>

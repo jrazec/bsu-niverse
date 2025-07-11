@@ -15,7 +15,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="2" name="Collision">
+ <objectgroup id="2" name="Collisions">
   <object id="3" x="54" y="64" width="298" height="27.5"/>
   <object id="10" x="64.6667" y="139.333" width="120" height="3.57576"/>
   <object id="14" x="47" y="58.3333" width="14.6667" height="168.5"/>

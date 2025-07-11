@@ -1,3 +1,4 @@
+import 'package:bsuniverse/game/sound_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/components.dart';
 import '../bsuniverse.dart';
@@ -39,7 +40,6 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
   late Animation<Offset> _slideAnimation;
   
   bool _showHamburgerMenu = false;
-  int _currentCoins = 0;
   double _soundVolume = 0.7;
   List<ActiveTask> _activeTasks = [];
   
@@ -78,8 +78,7 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
   }
 
   void _loadGameData() {
-    // Load current coins from player data
-    _currentCoins = widget.game.playerCoins;
+
     
     // Load active tasks from current popups and player data
     _loadActiveTasks();
@@ -155,20 +154,6 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
     return 'other';
   }
 
-  void _incrementCoins(int amount) {
-    setState(() {
-      _currentCoins += amount;
-    });
-    // Update game player data as well
-    widget.game.playerData.addCoins(amount);
-  }
-
-  void _decrementCoins(int amount) {
-    setState(() {
-      _currentCoins = (_currentCoins - amount).clamp(0, 999999);
-    });
-    // Note: Game doesn't have playerCoins property yet
-  }
 
   void _markTaskCompleted(String taskId, bool success) {
     setState(() {
@@ -179,13 +164,6 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
         
         // Update completion tracking
         _completedTasks[task.building] = (_completedTasks[task.building] ?? 0) + 1;
-        
-        // Update coins based on success/failure
-        if (success) {
-          _incrementCoins(5); // Success reward
-        } else {
-          _decrementCoins(2); // Failure penalty
-        }
         
         // Remove completed task after delay
         Future.delayed(const Duration(seconds: 2), () {
@@ -331,7 +309,7 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
 
   Widget _buildCoinCounter() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: pixelGold,
         border: Border.all(color: charcoalBlack, width: 2),
@@ -346,16 +324,17 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '🪙',
-            style: const TextStyle(fontSize: 16),
+          Icon(
+            Icons.monetization_on,
+            color: charcoalBlack,
+            size: 20,
           ),
           const SizedBox(width: 4),
           Text(
-            _currentCoins.toString(),
+            '${widget.game.spartaCoins.coins}',
             style: TextStyle(
               fontFamily: 'VT323',
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: charcoalBlack,
             ),
@@ -710,6 +689,8 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
     // Pause game and show exit confirmation
     widget.game.pauseEngine();
     _closeMenu();
+    Navigator.pushNamed(context, '/home');
+    GameSoundManager().stopBackgroundMusic();
   }
 
   void _closeMenu() {

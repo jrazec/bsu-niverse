@@ -50,6 +50,7 @@ List<Vector2> getArguments(TiledComponent map, Portal portal) {
     );
     return [size,position];
   }
+  
   final popupsGroup = map.tileMap.getLayer<Group>('RoomPortals');
   // IN MAP, only 1 Floor (floor1) AND rooms d1-d7.
   ObjectGroup? floor;
