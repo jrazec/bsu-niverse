@@ -35,6 +35,9 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Color scheme
+final Color pixelGold = Color.fromRGBO(255, 215, 0, 1.0);
+
 // Scene Configuration
 final Map<String, Map<String, dynamic>> tmxConfig = {
   "facade": {"image": "facade.tmx", "zoom": 4.0, "w": 25, "h": 11},
@@ -226,6 +229,7 @@ class BSUniverseGame extends FlameGame
   late final StatusButtonComponent buttonB;
   late final StatusButtonComponent buttonC;
   late final StatusButtonComponent buttonD;
+  late final StatusButtonComponent menuButton;
   late final MuteButtonComponent muteButton;
 
   // The whole Map is 30 x 40 Tiles where each tile is 32x32.
@@ -304,6 +308,17 @@ class BSUniverseGame extends FlameGame
       buttonD.onDragUpdateCallback = player.handleDButtonDrag;
       buttonD.onDragEndCallback = player.handleDButtonRelease;
 
+      // Create menu button
+      menuButton = StatusButtonComponent(
+        label: '☰',
+        color: pixelGold,
+        status: true,
+        cooldownMs: 500,
+        size: Vector2.all(50),
+        position: Vector2(canvasSize.x - 60, 60), // Top right, below mute button
+      );
+      menuButton.onPressed = (_) => showMenuScreen();
+
       // Create mute button
       final muteButtonSize = Vector2.all(50);
       muteButton = MuteButtonComponent(
@@ -369,6 +384,7 @@ class BSUniverseGame extends FlameGame
     currentCamera?.viewport.add(buttonB);
     currentCamera?.viewport.add(buttonA);
     currentCamera?.viewport.add(muteButton);
+    currentCamera?.viewport.add(menuButton);
     currentCamera?.setBounds(
       Rectangle.fromCenter(
         center: Vector2.zero(),
@@ -398,6 +414,9 @@ class BSUniverseGame extends FlameGame
 
     buttonD.size = buttonSize;
     buttonD.position = StatusButtonComponent.getButtonPosition(canvasSize, 3);
+
+    // Update menu button position
+    menuButton.position = Vector2(canvasSize.x - 60, 60);
 
     // Update mute button position
     final muteButtonSize = Vector2.all(50);
@@ -495,7 +514,20 @@ class BSUniverseGame extends FlameGame
       showQuestOverlay();
       return KeyEventResult.handled;
     }
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyM) {
+      showMenuScreen();
+      return KeyEventResult.handled;
+    }
     return super.onKeyEvent(event, keysPressed);
+  }
+
+  // Menu screen overlay controls
+  void showMenuScreen() {
+    overlays.add('MenuScreen');
+  }
+
+  void hideMenuScreen() {
+    overlays.remove('MenuScreen');
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import '../game/bsuniverse.dart';
 import '../widgets/loading_screen.dart';
 import '../game/widgets/quest_overlay.dart';
+import '../game/components/menu_screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -232,6 +233,10 @@ class _GameScreenState extends State<GameScreen> {
               coinsEarned: _lastQuestCoins,
               correctAnswers: _lastCorrectAnswers,
               onDismiss: () => game.hideQuestResultOverlay(),
+            ),
+        'MenuScreen': (context, game) => MenuScreenOverlay(
+              game: game,
+              onClose: () => game.hideMenuScreen(),
             ),
       },
       initialActiveOverlays: const [],
