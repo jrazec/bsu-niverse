@@ -416,7 +416,7 @@ class BSUniverseGame extends FlameGame
 
   @override
   void update(double dt) async {
-    if (isQuestActive) return; // Pause game update when quest is active
+    if (isQuestActive || isClosetActive) return; // Pause game update when quest or closet is active
     super.update(dt);
     if (initialized) {
       camera.viewfinder.position.round();
@@ -443,6 +443,39 @@ class BSUniverseGame extends FlameGame
   void hideQuestResultOverlay() {
     overlays.remove('QuestCompleted');
     overlays.remove('QuestFailed');
+  }
+  
+  // Closet overlay management
+  bool isClosetActive = false;
+  
+  void showClosetOverlay() {
+    overlays.add('ClosetOverlay');
+    isClosetActive = true;
+  }
+
+  void hideClosetOverlay() {
+    print("Hiding closet overlay, isClosetActive was: $isClosetActive");
+    overlays.remove('ClosetOverlay');
+    isClosetActive = false;
+    
+    // Reset player movement state to ensure they can move again
+    player.playerDirection = PlayerDirection.none;
+    player.moveDirection = Vector2.zero();
+    
+    print("Closet overlay hidden, isClosetActive now: $isClosetActive");
+  }
+  
+  Future<void> setPlayerOutfit(String newOutfit) async {
+    print("setPlayerOutfit called with: $newOutfit");
+    print("Current player outfit: ${player.currentSpriteSheet}");
+    
+    try {
+      await player.changeSpriteSheet(newOutfit);
+      print("Player outfit changed successfully to: $newOutfit");
+      print("Player current sprite sheet is now: ${player.currentSpriteSheet}");
+    } catch (e) {
+      print("Error changing player outfit: $e");
+    }
   }
   
   // SpartaCoins management methods
@@ -531,6 +564,14 @@ class BSUniverseGame extends FlameGame
       showQuestOverlay();
       return KeyEventResult.handled;
     }
+    
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.keyC) {
+      if (!isClosetActive && !isQuestActive) {
+        showClosetOverlay();
+      }
+      return KeyEventResult.handled;
+    }
+    
     return super.onKeyEvent(event, keysPressed);
   }
 }

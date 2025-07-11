@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import '../game/bsuniverse.dart';
 import '../widgets/loading_screen.dart';
 import '../game/widgets/quest_overlay.dart';
+import '../game/widgets/closet_overlay.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -223,6 +224,12 @@ class _GameScreenState extends State<GameScreen> {
               // Use helper methods to get current sprite configurations
               playerSprite: game.getCurrentPlayerSprite(),
               npcSprite: game.getCurrentNPCSprite(),
+            ),
+        'ClosetOverlay': (context, game) => ClosetOverlay(
+              game: game,
+              currentOutfit: game.player.currentSpriteSheet,
+              onOutfitSelected: (newOutfit) async => await game.setPlayerOutfit(newOutfit),
+              onClosed: () => game.hideClosetOverlay(),
             ),
         'QuestCompleted': (context, game) => QuestResultOverlay(
               isSuccess: true,
