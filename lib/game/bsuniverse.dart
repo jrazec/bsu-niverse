@@ -232,6 +232,9 @@ class BSUniverseGame extends FlameGame
   
   // SpartaCoins system
   late final SpartaCoinsComponent spartaCoins;
+  
+  // Closet system - track unlocked outfits
+  final Set<String> _unlockedOutfits = {'boy_uniform.png'}; // School uniform is unlocked by default
 
   // The whole Map is 30 x 40 Tiles where each tile is 32x32.
   // Bedroom 3 x 8
@@ -498,6 +501,16 @@ class BSUniverseGame extends FlameGame
   /// Sets the SpartaCoins to a specific amount
   void setSpartaCoins(int amount) {
     spartaCoins.updateCoins(amount);
+  }
+  
+  /// Gets the set of unlocked outfits
+  Set<String> getUnlockedOutfits() {
+    return Set.from(_unlockedOutfits);
+  }
+  
+  /// Unlocks a new outfit (for future use - like rewards from quests)
+  void unlockOutfit(String spriteFileName) {
+    _unlockedOutfits.add(spriteFileName);
   }
   
   /// Handles coin rewards/deductions from quest completion

@@ -21,11 +21,15 @@ class OutfitConfig {
   final String displayName;
   final String spriteFileName;
   final String previewImagePath;
+  final int cost; // Cost in SpartaCoins to unlock (0 means free/default)
+  final bool isDefault; // Whether this outfit is unlocked by default
   
   const OutfitConfig({
     required this.displayName,
     required this.spriteFileName,
     required this.previewImagePath,
+    this.cost = 0,
+    this.isDefault = false,
   });
 }
 
@@ -34,6 +38,10 @@ class ClosetOverlay extends StatefulWidget {
   final Future<void> Function(String) onOutfitSelected; // Called when outfit is confirmed
   final void Function() onClosed; // Called when overlay is closed
   final String currentOutfit; // Current player outfit sprite filename
+  final int Function() getSpartaCoins; // Function to get current SpartaCoins
+  final void Function(int) removeSpartaCoins; // Function to remove SpartaCoins
+  final Set<String> unlockedOutfits; // Set of unlocked outfit sprite filenames
+  final void Function(String) onOutfitUnlocked; // Function to persist unlocked outfit to game
   
   // Available outfits configuration
   static const List<OutfitConfig> availableOutfits = [
@@ -41,21 +49,29 @@ class ClosetOverlay extends StatefulWidget {
       displayName: 'School Uniform',
       spriteFileName: 'boy_uniform.png',
       previewImagePath: 'men_school_unif.png',
+      cost: 0, // Free/default outfit
+      isDefault: true,
     ),
     OutfitConfig(
       displayName: 'PE Uniform',
       spriteFileName: 'boy_pe.png',
       previewImagePath: 'pe_uniform.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
     ),
     OutfitConfig(
       displayName: 'JPCS Set',
       spriteFileName: 'boy_jpcs.png', 
       previewImagePath: 'jpcs_set.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
     ),
     OutfitConfig(
       displayName: 'TechIS Set',
       spriteFileName: 'boy_techis.png',
       previewImagePath: 'tech_is_set.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
     ),
   ];
 
@@ -65,6 +81,10 @@ class ClosetOverlay extends StatefulWidget {
     required this.onOutfitSelected,
     required this.onClosed,
     required this.currentOutfit,
+    required this.getSpartaCoins,
+    required this.removeSpartaCoins,
+    required this.unlockedOutfits,
+    required this.onOutfitUnlocked,
   }) : super(key: key);
 
   @override
@@ -79,6 +99,8 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   
   String? selectedOutfit;
   bool _isClosing = false;
+  late Set<String> _unlockedOutfits;
+  late int _currentCoins;
   
   @override
   void initState() {
@@ -86,6 +108,10 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
     
     // Set current outfit as initially selected
     selectedOutfit = widget.currentOutfit;
+    
+    // Initialize unlocked outfits and current coins
+    _unlockedOutfits = Set.from(widget.unlockedOutfits);
+    _currentCoins = widget.getSpartaCoins();
     
     // Fade animation for overlay appearance
     _fadeController = AnimationController(
@@ -137,12 +163,23 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   Future<void> _confirmSelection() async {
     print("Confirm selection called with selectedOutfit: $selectedOutfit");
     if (selectedOutfit != null && selectedOutfit != widget.currentOutfit) {
-      print("Calling onOutfitSelected with: $selectedOutfit");
-      try {
-        await widget.onOutfitSelected(selectedOutfit!);
-        print("onOutfitSelected completed successfully");
-      } catch (e) {
-        print("Error in onOutfitSelected: $e");
+      // Check if the selected outfit is unlocked before confirming
+      final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+        (outfit) => outfit.spriteFileName == selectedOutfit,
+      );
+      final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
+      
+      if (isUnlocked) {
+        print("Calling onOutfitSelected with: $selectedOutfit");
+        try {
+          await widget.onOutfitSelected(selectedOutfit!);
+          print("onOutfitSelected completed successfully");
+        } catch (e) {
+          print("Error in onOutfitSelected: $e");
+        }
+      } else {
+        print("Cannot confirm locked outfit: $selectedOutfit");
+        return; // Don't close overlay if outfit is locked
       }
     }
     print("Closing overlay after confirmation");
@@ -152,36 +189,47 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   Widget _buildOutfitButton(OutfitConfig outfit) {
     final bool isSelected = selectedOutfit == outfit.spriteFileName;
     final bool isCurrent = widget.currentOutfit == outfit.spriteFileName;
+    final bool isUnlocked = outfit.isDefault || _unlockedOutfits.contains(outfit.spriteFileName);
+    final bool canAfford = _currentCoins >= outfit.cost;
     
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedOutfit = outfit.spriteFileName;
-        });
+        if (isUnlocked) {
+          // Allow selection if unlocked
+          setState(() {
+            selectedOutfit = outfit.spriteFileName;
+          });
+        } else if (canAfford && outfit.cost > 0) {
+          // Show unlock dialog if locked but affordable
+          _showUnlockDialog(outfit);
+        } else {
+          // Show insufficient funds message
+          _showInsufficientFundsDialog(outfit);
+        }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? Colors.yellow : Colors.white,
-            width: isSelected ? 3 : 1, // Thinner borders for mobile
+            color: isSelected ? Colors.yellow : (isUnlocked ? Colors.white : Colors.red),
+            width: isSelected ? 3 : 1,
           ),
-          borderRadius: BorderRadius.circular(8), // Smaller border radius
+          borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected ? [
             BoxShadow(
               color: Colors.yellow.withOpacity(0.5),
-              blurRadius: 6, // Smaller shadow for mobile
-              spreadRadius: 1, // Smaller shadow spread
+              blurRadius: 6,
+              spreadRadius: 1,
             ),
           ] : [],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(6), // Smaller border radius
+          borderRadius: BorderRadius.circular(6),
           child: Stack(
             children: [
               // Background
               Container(
-                color: Colors.black54,
+                color: isUnlocked ? Colors.black54 : Colors.black87, // Darker for locked
               ),
               // Outfit preview image
               FutureBuilder<ui.Image>(
@@ -198,6 +246,39 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                   );
                 },
               ),
+              // Lock overlay for locked outfits
+              if (!isUnlocked)
+                Container(
+                  color: Colors.black.withOpacity(0.7),
+                  child: const Center(
+                    child: Icon(
+                      Icons.lock,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ),
+              // Cost display for locked outfits
+              if (!isUnlocked && outfit.cost > 0)
+                Positioned(
+                  top: 4,
+                  left: 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: canAfford ? Colors.green : Colors.red,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      '🪙${outfit.cost}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               // Current outfit indicator
               if (isCurrent)
                 Positioned(
@@ -234,7 +315,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                     outfit.displayName,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 8, // Much smaller font for mobile - reduced from 10 to 8
+                      fontSize: 16, // Much smaller font for mobile - reduced from 10 to 8
                       fontWeight: FontWeight.bold,
                       fontFamily: 'VT323',
                     ),
@@ -254,6 +335,76 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   Future<ui.Image> _loadImage(String path) async {
     final imageData = await widget.game.images.load(path);
     return imageData;
+  }
+  
+  // Show dialog to confirm outfit unlock
+  void _showUnlockDialog(OutfitConfig outfit) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.black87,
+          title: Text(
+            'Unlock ${outfit.displayName}?',
+            style: const TextStyle(color: Colors.white, fontFamily: 'VT323'),
+          ),
+          content: Text(
+            'This will cost ${outfit.cost} SpartaCoins.\nYou currently have $_currentCoins coins.',
+            style: const TextStyle(color: Colors.white, fontFamily: 'VT323'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _unlockOutfit(outfit);
+              },
+              child: const Text('Unlock', style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  // Show dialog for insufficient funds
+  void _showInsufficientFundsDialog(OutfitConfig outfit) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.black87,
+          title: const Text(
+            'Insufficient SpartaCoins',
+            style: TextStyle(color: Colors.white, fontFamily: 'VT323'),
+          ),
+          content: Text(
+            'You need ${outfit.cost} SpartaCoins to unlock ${outfit.displayName}.\nYou currently have $_currentCoins coins.',
+            style: const TextStyle(color: Colors.white, fontFamily: 'VT323'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+  // Unlock an outfit by spending coins
+  void _unlockOutfit(OutfitConfig outfit) {
+    setState(() {
+      _unlockedOutfits.add(outfit.spriteFileName);
+      _currentCoins -= outfit.cost;
+      widget.removeSpartaCoins(outfit.cost);
+      widget.onOutfitUnlocked(outfit.spriteFileName); // Persist unlock to game
+      selectedOutfit = outfit.spriteFileName; // Auto-select the newly unlocked outfit
+    });
   }
   
   @override
@@ -313,23 +464,47 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                               padding: const EdgeInsets.all(8), // Reverted back to original padding
                               child: Column(
                                 children: [
-                                  // Title
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), // Reverted back to original padding
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.8),
-                                      borderRadius: BorderRadius.circular(10), // Reverted back to original border radius
-                                      border: Border.all(color: Colors.white, width: 2), // Reverted back to original border
-                                    ),
-                                    child: const Text(
-                                      'CHOOSE YOUR OUTFIT',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16, // Reverted back to original font size
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'VT323',
+                                  // Title and SpartaCoins display row
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Title
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.8),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(color: Colors.white, width: 2),
+                                        ),
+                                        child: const Text(
+                                          'CHOOSE YOUR OUTFIT',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'VT323',
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      // SpartaCoins display
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.8),
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(color: Colors.amber, width: 2),
+                                        ),
+                                        child: Text(
+                                          '🪙 $_currentCoins',
+                                          style: const TextStyle(
+                                            color: Colors.amber,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'VT323',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   
                                   const SizedBox(height: 6), // Keep smaller spacing
@@ -381,7 +556,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                         child: const Text(
                                           'CANCEL',
                                           style: TextStyle(
-                                            fontSize: 12, // Keep smaller font
+                                            fontSize: 24, // Keep smaller font
                                             fontWeight: FontWeight.bold,
                                             fontFamily: 'VT323',
                                           ),
@@ -390,28 +565,49 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                       
                                       // Confirm button
                                       ElevatedButton(
-                                        onPressed: selectedOutfit == widget.currentOutfit 
-                                          ? _closeOverlay 
-                                          : _confirmSelection,
+                                        onPressed: () {
+                                          if (selectedOutfit == widget.currentOutfit) {
+                                            _closeOverlay();
+                                          } else {
+                                            // Check if selected outfit is unlocked
+                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                              (outfit) => outfit.spriteFileName == selectedOutfit,
+                                            );
+                                            final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
+                                            if (isUnlocked) {
+                                              _confirmSelection();
+                                            }
+                                          }
+                                        },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: selectedOutfit == widget.currentOutfit 
-                                            ? Colors.grey 
-                                            : Colors.green,
+                                          backgroundColor: () {
+                                            if (selectedOutfit == widget.currentOutfit) return Colors.grey;
+                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                              (outfit) => outfit.spriteFileName == selectedOutfit,
+                                            );
+                                            final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
+                                            return isUnlocked ? Colors.green : Colors.red;
+                                          }(),
                                           foregroundColor: Colors.white,
                                           padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, // Reverted back to original padding
-                                            vertical: 6, // Keep smaller vertical padding
+                                            horizontal: 16,
+                                            vertical: 6,
                                           ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8), // Reverted back to original border radius
+                                            borderRadius: BorderRadius.circular(8),
                                           ),
                                         ),
                                         child: Text(
-                                          selectedOutfit == widget.currentOutfit 
-                                            ? 'CLOSE' 
-                                            : 'CONFIRM',
+                                          () {
+                                            if (selectedOutfit == widget.currentOutfit) return 'CLOSE';
+                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                              (outfit) => outfit.spriteFileName == selectedOutfit,
+                                            );
+                                            final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
+                                            return isUnlocked ? 'CONFIRM' : 'LOCKED';
+                                          }(),
                                           style: const TextStyle(
-                                            fontSize: 12, // Keep smaller font
+                                            fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                             fontFamily: 'VT323',
                                           ),

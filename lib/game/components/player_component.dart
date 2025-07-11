@@ -201,8 +201,8 @@ class PlayerComponent extends SpriteAnimationComponent
   bool _loadedAnimations = false;
 
   // Current sprite configuration - this will be set when sprites are loaded
-  String currentSpriteSheet = 'boy_pe.png'; // Default, but will be dynamic
-  
+  String currentSpriteSheet = 'boy_uniform.png'; // Default, but will be dynamic
+
   // Method to get the current player sprite configuration for quest overlay
   PlayerSpriteConfig getCurrentSpriteConfig() {
     return PlayerSpriteConfig(

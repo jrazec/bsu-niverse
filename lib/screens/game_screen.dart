@@ -230,6 +230,10 @@ class _GameScreenState extends State<GameScreen> {
               currentOutfit: game.player.currentSpriteSheet,
               onOutfitSelected: (newOutfit) async => await game.setPlayerOutfit(newOutfit),
               onClosed: () => game.hideClosetOverlay(),
+              getSpartaCoins: () => game.getSpartaCoins(),
+              removeSpartaCoins: (amount) => game.removeSpartaCoins(amount),
+              unlockedOutfits: game.getUnlockedOutfits(),
+              onOutfitUnlocked: (spriteFileName) => game.unlockOutfit(spriteFileName),
             ),
         'QuestCompleted': (context, game) => QuestResultOverlay(
               isSuccess: true,
