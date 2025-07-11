@@ -10,7 +10,7 @@ void setUpAbb(TiledComponent map) {
     Portal(
       map: map,
       destination: GoTo.map,
-      startingPosition: Vector2(225, 1300),
+      startingPosition: Vector2(800, 445),
       selection: FloorList(
         goOut: true
       ),

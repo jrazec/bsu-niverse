@@ -11,9 +11,17 @@ void setUpGzb(TiledComponent map) {
     Portal(
       map: map,
       destination: GoTo.map,
-      startingPosition: Vector2(320, 1150),
+      startingPosition: Vector2(565, 220),
       selection: FloorList(
         goOut: true
+      ),
+    ),
+       Portal(
+      map: map,
+      destination: GoTo.map,
+      startingPosition: Vector2(390, 220),
+      selection: FloorList(
+        goIn: true
       ),
     ),
 

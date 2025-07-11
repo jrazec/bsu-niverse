@@ -66,16 +66,20 @@ void setUpMapBsu(TiledComponent map) {
       startingPosition: Vector2(267, 1144),
       selection: FloorList(floor1: RoomList.d5),
     ),
+    
+    // GYM
     Portal(
       map: map,
       destination: GoTo.gymn,
       startingPosition: Vector2(74, 163),
       selection: FloorList(floor1: RoomList.d6),
     ),
+    
+    // ABB
     Portal(
       map: map,
       destination: GoTo.abb,
-      startingPosition: Vector2(267, 1144),
+      startingPosition: Vector2(190, 1315),
       selection: FloorList(floor1: RoomList.d7),
     ),
   ];

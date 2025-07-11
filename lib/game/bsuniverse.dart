@@ -56,7 +56,7 @@ final Map<String, Map<String, dynamic>> tmxConfig = {
     "h": 10,
   },
   "comLab503Lsb": {
-    "image": "Comlab502_cecs.tmx",
+    "image": "Comlab503_cecs.tmx",
     "zoom": 4.0,
     "w": 10,
     "h": 10,
@@ -64,8 +64,8 @@ final Map<String, Map<String, dynamic>> tmxConfig = {
   "comLab301Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "comLab302Vmb": {"image": "ComlabHeb.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "vmbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 13, "h": 9},
-  "abbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
-  "gzbRoom": {"image": "classroom_cecs-heb.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "abbRoom": {"image": "classroom-ob.tmx", "zoom": 4.0, "w": 10, "h": 10},
+  "gzbRoom": {"image": "classroom-ldc.tmx", "zoom": 4.0, "w": 10, "h": 10},
   "libraryRoom": {"image": "Library.tmx", "zoom": 4.0, "w": 17, "h": 9},
   "canteen": {"image": "canteenldc.tmx", "zoom": 4.0, "w": 10, "h": 10},
 };
