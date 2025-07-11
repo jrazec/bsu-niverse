@@ -574,58 +574,108 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                         ),
                                       ),
                                       
-                                      // Gender toggle button
-                                      GestureDetector(
-                                        onTap: _toggleGender,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: _isFemaleMode ? Colors.pink.withOpacity(0.8) : Colors.blue.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(8),
-                                            border: Border.all(color: Colors.white, width: 2),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                _isFemaleMode ? '♀️' : '♂️',
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white,
-                                                ),
+                                      // Right side - Gender toggle and SpartaCoins
+                                      Row(
+                                        children: [
+                                          // Gender toggle button
+                                          GestureDetector(
+                                            onTap: _toggleGender,
+                                            child: Container(
+                                              width: 80,
+                                              height: 32,
+                                              decoration: BoxDecoration(
+                                                color: _isFemaleMode ? Colors.pink.withOpacity(0.3) : Colors.blue.withOpacity(0.3),
+                                                borderRadius: BorderRadius.circular(16),
+                                                border: Border.all(color: Colors.white, width: 2),
                                               ),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                _isFemaleMode ? 'GIRL' : 'BOY',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'VT323',
-                                                ),
+                                              child: Stack(
+                                                children: [
+                                                  // Switch background with labels
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 32,
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            '♂️',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: !_isFemaleMode ? Colors.white : Colors.white.withOpacity(0.5),
+                                                              height: 1.0,
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 32,
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            '♀️',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: _isFemaleMode ? Colors.white : Colors.white.withOpacity(0.5),
+                                                              height: 1.0,
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // Sliding indicator
+                                                  AnimatedPositioned(
+                                                    duration: const Duration(milliseconds: 200),
+                                                    curve: Curves.easeInOut,
+                                                    left: _isFemaleMode ? 40 : 0,
+                                                    top: 0,                                                      child: Container(
+                                                        width: 40,
+                                                        height: 32,
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: _isFemaleMode ? Colors.pink : Colors.blue,
+                                                          borderRadius: BorderRadius.circular(16),
+                                                          border: Border.all(color: Colors.white, width: 2),
+                                                        ),
+                                                        child: Text(
+                                                          _isFemaleMode ? '♀️' : '♂️',
+                                                          style: const TextStyle(
+                                                            fontSize: 18,
+                                                            color: Colors.white,
+                                                            height: 1.0,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      
-                                      // SpartaCoins display
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: Colors.amber, width: 2),
-                                        ),
-                                        child: Text(
-                                          '🪙 $_currentCoins',
-                                          style: const TextStyle(
-                                            color: Colors.amber,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'VT323',
+                                          
+                                          const SizedBox(width: 8), // Space between gender toggle and coins
+                                          
+                                          // SpartaCoins display
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black.withOpacity(0.8),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(color: Colors.amber, width: 2),
+                                            ),
+                                            child: Text(
+                                              '🪙 $_currentCoins',
+                                              style: const TextStyle(
+                                                color: Colors.amber,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'VT323',
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     ],
                                   ),
