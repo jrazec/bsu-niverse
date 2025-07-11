@@ -2,6 +2,7 @@ import 'package:bsuniverse/game/components/joystick_component.dart';
 import 'package:bsuniverse/game/components/player_component.dart';
 import 'package:bsuniverse/game/components/button_components.dart';
 import 'package:bsuniverse/game/components/mute_button_component.dart';
+import 'package:bsuniverse/game/components/sparta_coins_component.dart';
 import 'package:bsuniverse/game/components/wall_component.dart';
 import 'package:bsuniverse/game/setup/abb.dart';
 import 'package:bsuniverse/game/sound_manager.dart';
@@ -228,6 +229,9 @@ class BSUniverseGame extends FlameGame
   late final StatusButtonComponent buttonC;
   late final StatusButtonComponent buttonD;
   late final MuteButtonComponent muteButton;
+  
+  // SpartaCoins system
+  late final SpartaCoinsComponent spartaCoins;
 
   // The whole Map is 30 x 40 Tiles where each tile is 32x32.
   // Bedroom 3 x 8
@@ -316,6 +320,9 @@ class BSUniverseGame extends FlameGame
         size: muteButtonSize,
       );
 
+      // Initialize SpartaCoins with 10 initial coins
+      spartaCoins = SpartaCoinsComponent(initialCoins: 10);
+
       // player.debugMode = true;
       player.debugColor = Colors.white;
       player.debugMode = true;
@@ -368,6 +375,7 @@ class BSUniverseGame extends FlameGame
     currentCamera?.viewport.add(buttonB);
     currentCamera?.viewport.add(buttonA);
     currentCamera?.viewport.add(muteButton);
+    currentCamera?.viewport.add(spartaCoins);
     currentCamera?.setBounds(
       Rectangle.fromCenter(
         center: Vector2.zero(),
@@ -435,6 +443,38 @@ class BSUniverseGame extends FlameGame
   void hideQuestResultOverlay() {
     overlays.remove('QuestCompleted');
     overlays.remove('QuestFailed');
+  }
+  
+  // SpartaCoins management methods
+  
+  /// Gets the current amount of SpartaCoins
+  int getSpartaCoins() {
+    return spartaCoins.coins;
+  }
+  
+  /// Adds SpartaCoins to the player's total
+  void addSpartaCoins(int amount) {
+    spartaCoins.addCoins(amount);
+  }
+  
+  /// Removes SpartaCoins from the player's total (won't go below 0)
+  void removeSpartaCoins(int amount) {
+    spartaCoins.removeCoins(amount);
+  }
+  
+  /// Sets the SpartaCoins to a specific amount
+  void setSpartaCoins(int amount) {
+    spartaCoins.updateCoins(amount);
+  }
+  
+  /// Handles coin rewards/deductions from quest completion
+  void handleQuestCoinReward(int coinsEarned) {
+    if (coinsEarned > 0) {
+      addSpartaCoins(coinsEarned);
+    } else if (coinsEarned < 0) {
+      removeSpartaCoins(-coinsEarned); // Convert negative to positive for removal
+    }
+    // If coinsEarned is 0, no change is made
   }
   
   // Player sprite configuration - now gets it from the actual player component
@@ -762,8 +802,8 @@ class Scene extends World {
     final popupsGroup = map.tileMap.getLayer<Group>('Popups');
     if (popupsGroup != null) {
       for (final subGroup in popupsGroup.layers.whereType<ObjectGroup>()) {
-        for (final obj in subGroup.objects) {
-          // You may want to parse popup data from obj.properties if available
+        for (final _ in subGroup.objects) {
+          // You may want to parse popup data from object.properties if available
           // TODO: Add popup creation logic here
         }
       }

@@ -84,6 +84,9 @@ class _GameScreenState extends State<GameScreen> {
       _lastCorrectAnswers = correctAnswers;
       _lastQuestSuccess = coinsEarned >= 0;
       
+      // Apply SpartaCoins reward/penalty to the game
+      _game.handleQuestCoinReward(coinsEarned);
+      
       // Generate new random quest for next time
       _generateRandomQuest();
       
