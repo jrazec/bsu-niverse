@@ -1,9 +1,7 @@
 import 'package:bsuniverse/game/bsuniverse.dart';
 import 'package:bsuniverse/game/setup/get_arguments.dart';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
 
 // Create a List Here which will contain the
 // Label or Name of the Room, Their Destination Room, Their Starting Vector Position

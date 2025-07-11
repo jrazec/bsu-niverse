@@ -557,9 +557,6 @@ class Scene extends World {
       case GoTo.library:
         sceneMap = await _setMap("libraryRoom");
         break;
-      default:
-        sceneMap = await _setMap("bedroom");
-        break;
     }
     print(sceneName);
     add(sceneMap as Component);
