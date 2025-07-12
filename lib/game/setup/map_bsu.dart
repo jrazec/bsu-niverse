@@ -72,7 +72,7 @@ void setUpMapBsu(TiledComponent map) {
       map: map,
       destination: GoTo.gymn,
       startingPosition: Vector2(74, 163),
-      selection: FloorList(floor1: RoomList.d6),
+      selection: FloorList(floor1: RoomList.d6,leaveRoomMap: GoTo.map,leaveRoomSpawnPoint: Vector2(665, 482)),
     ),
     
     // ABB
