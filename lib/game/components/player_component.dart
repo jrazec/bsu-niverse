@@ -309,13 +309,14 @@ class PlayerComponent extends SpriteAnimationComponent
       row: 0,
       stepTime: 0.15,
       from: 0,
+      
       to: 3,
     );
     upAnimation = spriteSheetData.createAnimation(
       row: 0,
       stepTime: 0.15,
       from: 3,
-      to: 5,
+      to: 6,
     );
     idleAnimation = spriteSheetData.createAnimation(
       row: 0,

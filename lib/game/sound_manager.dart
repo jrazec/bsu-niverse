@@ -163,7 +163,7 @@ class GameSoundManager {
 
     try {
       // Using button click sound as placeholder until you find appropriate quest failed sound
-      await _sfxPlayer.play(AssetSource('audio/button_click.mp3'));
+      await _sfxPlayer.play(AssetSource('audio/quest_failed.mp3'));
     } catch (e) {
       print('Error playing quest failed sound: $e');
       // Don't throw error, just continue without sound
