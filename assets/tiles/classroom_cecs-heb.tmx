@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="34">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="34">
  <tileset firstgid="1" source="cecsClassroom.tsx"/>
  <tileset firstgid="46" source="test.tsx"/>
+ <tileset firstgid="47" source="map.tsx"/>
+ <layer id="9" name="back" width="13" height="9">
+  <data encoding="csv">
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167,
+167,167,167,167,167,167,167,167,167,167,167,167,167
+</data>
+ </layer>
  <layer id="1" name="room" width="13" height="9">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,

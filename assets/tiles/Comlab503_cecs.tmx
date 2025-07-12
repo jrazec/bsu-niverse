@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="42">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="42">
  <tileset firstgid="1" source="comlab-cecs.tsx"/>
  <tileset firstgid="46" source="test.tsx"/>
  <tileset firstgid="47" source="comlab-cecs2.tsx"/>
+ <tileset firstgid="92" source="map.tsx"/>
+ <layer id="10" name="back" width="13" height="9">
+  <data encoding="csv">
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212
+</data>
+ </layer>
  <layer id="5" name="Tile Layer 1" width="13" height="9" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,

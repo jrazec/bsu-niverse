@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="6" nextobjectid="23">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="23">
  <tileset firstgid="1" source="classroom-ob.tsx"/>
+ <tileset firstgid="46" source="map.tsx"/>
+ <layer id="6" name="back" width="13" height="9">
+  <data encoding="csv">
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166,
+166,166,166,166,166,166,166,166,166,166,166,166,166
+</data>
+ </layer>
  <layer id="1" name="room" width="13" height="9">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,
