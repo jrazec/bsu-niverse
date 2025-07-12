@@ -56,7 +56,7 @@ void setUpLsb(TiledComponent map) {
     Portal(
       map: map,
       destination: GoTo.comLab502LSB,
-      startingPosition: Vector2(74, 163),
+      startingPosition: Vector2(90, 163),
       selection: FloorList(
         floor5: RoomList.d4,
         leaveRoomSpawnPoint: Vector2(570, 95), // When leaving room, spawn here
@@ -78,7 +78,7 @@ void setUpLsb(TiledComponent map) {
     Portal(
       map: map,
       destination: GoTo.comLab503LSB,
-      startingPosition: Vector2(74, 163),
+      startingPosition: Vector2(100, 163),
       selection: FloorList(
         floor5: RoomList.d6,
         leaveRoomSpawnPoint: Vector2(770, 95), // When leaving room, spawn here

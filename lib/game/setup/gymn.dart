@@ -8,8 +8,8 @@ void setUpGymn(TiledComponent map) {
   final List<Portal> gym = [
     Portal(
       map: map,
-      destination: lastMap ?? GoTo.map, 
-      startingPosition: lastPortalPosition ?? Vector2(0, 0),
+      destination: GoTo.map, 
+      startingPosition: Vector2(665, 482),
       selection: FloorList(goOut: true),
     ),
   ];
