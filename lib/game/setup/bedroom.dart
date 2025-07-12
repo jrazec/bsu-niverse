@@ -39,7 +39,7 @@ class ClosetPops extends RectangleComponent
   final TiledComponent map;
   ClosetPops({
     required this.map,
-  }) : super(paint: Paint()..color = const Color.fromARGB(255, 0, 0, 0));
+  }) : super(paint: Paint()..color = const Color.fromARGB(0, 0, 0, 0));
 
   @override
   Future<void> onLoad() async {
@@ -61,6 +61,7 @@ class ClosetPops extends RectangleComponent
     PositionComponent other,
   ) async {
     super.onCollision(intersectionPoints, other);
+    game.player.position = Vector2(25,49);
     game.showClosetOverlay();
   }
 }

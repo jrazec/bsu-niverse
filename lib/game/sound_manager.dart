@@ -124,6 +124,52 @@ class GameSoundManager {
     }
   }
 
+  // Quest Sound Effects
+  Future<void> playQuestCorrectAnswerSound() async {
+    if (!_isSfxEnabled) return;
+
+    try {
+      await _sfxPlayer.play(AssetSource('audio/correct_answer.mp3'));
+    } catch (e) {
+      print('Error playing quest correct answer sound: $e');
+      // Don't throw error, just continue without sound
+    }
+  }
+
+  Future<void> playQuestWrongAnswerSound() async {
+    if (!_isSfxEnabled) return;
+
+    try {
+      await _sfxPlayer.play(AssetSource('audio/wrong_answer.mp3'));
+    } catch (e) {
+      print('Error playing quest wrong answer sound: $e');
+      // Don't throw error, just continue without sound
+    }
+  }
+
+  Future<void> playQuestCompleteSound() async {
+    if (!_isSfxEnabled) return;
+
+    try {
+      await _sfxPlayer.play(AssetSource('audio/quest_complete.mp3'));
+    } catch (e) {
+      print('Error playing quest complete sound: $e');
+      // Don't throw error, just continue without sound
+    }
+  }
+
+  Future<void> playQuestFailedSound() async {
+    if (!_isSfxEnabled) return;
+
+    try {
+      // Using button click sound as placeholder until you find appropriate quest failed sound
+      await _sfxPlayer.play(AssetSource('audio/button_click.mp3'));
+    } catch (e) {
+      print('Error playing quest failed sound: $e');
+      // Don't throw error, just continue without sound
+    }
+  }
+
 
 
   // Volume Controls

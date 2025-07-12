@@ -75,6 +75,38 @@ class ClosetOverlay extends StatefulWidget {
     ),
   ];
 
+  // Female outfit configurations
+  static const List<OutfitConfig> femaleOutfits = [
+    OutfitConfig(
+      displayName: 'School Uniform',
+      spriteFileName: 'girl_uniform.png',
+      previewImagePath: 'women_school_unif.png',
+      cost: 0, // Free/default outfit
+      isDefault: true,
+    ),
+    OutfitConfig(
+      displayName: 'PE Uniform',
+      spriteFileName: 'girl_pe.png',
+      previewImagePath: 'pe_uniform.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
+    ),
+    OutfitConfig(
+      displayName: 'JPCS Set',
+      spriteFileName: 'girl_jpcs.png', 
+      previewImagePath: 'jpcs_set.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
+    ),
+    OutfitConfig(
+      displayName: 'TechIS Set',
+      spriteFileName: 'girl_techis.png',
+      previewImagePath: 'tech_is_set.png',
+      cost: 5, // Costs 5 SpartaCoins
+      isDefault: false,
+    ),
+  ];
+
   const ClosetOverlay({
     Key? key,
     required this.game,
@@ -101,10 +133,14 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   bool _isClosing = false;
   late Set<String> _unlockedOutfits;
   late int _currentCoins;
+  bool _isFemaleMode = false; // Toggle for boy/girl sprites
   
   @override
   void initState() {
     super.initState();
+    
+    // Detect current gender from outfit filename
+    _isFemaleMode = widget.currentOutfit.startsWith('girl_');
     
     // Set current outfit as initially selected
     selectedOutfit = widget.currentOutfit;
@@ -144,6 +180,55 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
     _scaleController.forward();
   }
   
+  // Get current outfits based on gender selection
+  List<OutfitConfig> get _currentOutfits => _isFemaleMode ? ClosetOverlay.femaleOutfits : ClosetOverlay.availableOutfits;
+  
+  // Check if a given outfit sprite filename is equivalent to the current outfit
+  // This handles cross-gender outfit equivalence (e.g., boy_uniform.png = girl_uniform.png)
+  bool _isCurrentOutfitEquivalent(String outfitFileName) {
+    if (widget.currentOutfit == outfitFileName) {
+      return true; // Exact match
+    }
+    
+    // Find the index of the current outfit in its original gender list
+    final bool currentIsGirl = widget.currentOutfit.startsWith('girl_');
+    final List<OutfitConfig> originalList = currentIsGirl ? ClosetOverlay.femaleOutfits : ClosetOverlay.availableOutfits;
+    final int currentIndex = originalList.indexWhere((outfit) => outfit.spriteFileName == widget.currentOutfit);
+    
+    if (currentIndex == -1) return false; // Current outfit not found
+    
+    // Check if the given outfit is at the same index in the other gender list
+    final List<OutfitConfig> otherList = currentIsGirl ? ClosetOverlay.availableOutfits : ClosetOverlay.femaleOutfits;
+    if (currentIndex < otherList.length) {
+      return otherList[currentIndex].spriteFileName == outfitFileName;
+    }
+    
+    return false;
+  }
+  
+  // Toggle between male and female outfits
+  void _toggleGender() {
+    setState(() {
+      _isFemaleMode = !_isFemaleMode;
+      // When switching gender, select the equivalent outfit in the new gender
+      if (selectedOutfit != null) {
+        final previousOutfits = _isFemaleMode ? ClosetOverlay.availableOutfits : ClosetOverlay.femaleOutfits;
+        final currentOutfits = _currentOutfits;
+        
+        // Find the index of the currently selected outfit in the previous gender's list
+        final currentIndex = previousOutfits.indexWhere((outfit) => outfit.spriteFileName == selectedOutfit);
+        
+        if (currentIndex >= 0 && currentIndex < currentOutfits.length) {
+          // Map to equivalent outfit in new gender (same index position)
+          selectedOutfit = currentOutfits[currentIndex].spriteFileName;
+        } else {
+          // Default to uniform if no equivalent found
+          selectedOutfit = currentOutfits[0].spriteFileName;
+        }
+      }
+    });
+  }
+  
   @override
   void dispose() {
     _fadeController.dispose();
@@ -164,7 +249,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
     print("Confirm selection called with selectedOutfit: $selectedOutfit");
     if (selectedOutfit != null && selectedOutfit != widget.currentOutfit) {
       // Check if the selected outfit is unlocked before confirming
-      final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+      final selectedOutfitConfig = _currentOutfits.firstWhere(
         (outfit) => outfit.spriteFileName == selectedOutfit,
       );
       final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
@@ -188,7 +273,8 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
   
   Widget _buildOutfitButton(OutfitConfig outfit) {
     final bool isSelected = selectedOutfit == outfit.spriteFileName;
-    final bool isCurrent = widget.currentOutfit == outfit.spriteFileName;
+    // Check if this outfit corresponds to the current outfit (considering gender equivalence)
+    final bool isCurrent = _isCurrentOutfitEquivalent(outfit.spriteFileName);
     final bool isUnlocked = outfit.isDefault || _unlockedOutfits.contains(outfit.spriteFileName);
     final bool canAfford = _currentCoins >= outfit.cost;
     
@@ -233,6 +319,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
               ),
               // Outfit preview image
               FutureBuilder<ui.Image>(
+                key: ValueKey('${outfit.previewImagePath}_${_isFemaleMode}'), // Force rebuild when gender changes
                 future: _loadImage(outfit.previewImagePath),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -447,7 +534,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                           children: [
                             // Closet background
                             FutureBuilder<ui.Image>(
-                              future: _loadImage('closet.jpg'),
+                              future: _loadImage('closet.png'),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
                                   return CustomPaint(
@@ -486,23 +573,109 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                           ),
                                         ),
                                       ),
-                                      // SpartaCoins display
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(8),
-                                          border: Border.all(color: Colors.amber, width: 2),
-                                        ),
-                                        child: Text(
-                                          '🪙 $_currentCoins',
-                                          style: const TextStyle(
-                                            color: Colors.amber,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'VT323',
+                                      
+                                      // Right side - Gender toggle and SpartaCoins
+                                      Row(
+                                        children: [
+                                          // Gender toggle button
+                                          GestureDetector(
+                                            onTap: _toggleGender,
+                                            child: Container(
+                                              width: 80,
+                                              height: 32,
+                                              decoration: BoxDecoration(
+                                                color: _isFemaleMode ? Colors.pink.withOpacity(0.3) : Colors.blue.withOpacity(0.3),
+                                                borderRadius: BorderRadius.circular(16),
+                                                border: Border.all(color: Colors.white, width: 2),
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  // Switch background with labels
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 32,
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            '♂️',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: !_isFemaleMode ? Colors.white : Colors.white.withOpacity(0.5),
+                                                              height: 1.0,
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        child: Container(
+                                                          height: 32,
+                                                          alignment: Alignment.center,
+                                                          child: Text(
+                                                            '♀️',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: _isFemaleMode ? Colors.white : Colors.white.withOpacity(0.5),
+                                                              height: 1.0,
+                                                            ),
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  // Sliding indicator
+                                                  AnimatedPositioned(
+                                                    duration: const Duration(milliseconds: 200),
+                                                    curve: Curves.easeInOut,
+                                                    left: _isFemaleMode ? 40 : 0,
+                                                    top: 0,                                                      child: Container(
+                                                        width: 40,
+                                                        height: 32,
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: _isFemaleMode ? Colors.pink : Colors.blue,
+                                                          borderRadius: BorderRadius.circular(16),
+                                                          border: Border.all(color: Colors.white, width: 2),
+                                                        ),
+                                                        child: Text(
+                                                          _isFemaleMode ? '♀️' : '♂️',
+                                                          style: const TextStyle(
+                                                            fontSize: 18,
+                                                            color: Colors.white,
+                                                            height: 1.0,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          
+                                          const SizedBox(width: 8), // Space between gender toggle and coins
+                                          
+                                          // SpartaCoins display
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black.withOpacity(0.8),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(color: Colors.amber, width: 2),
+                                            ),
+                                            child: Text(
+                                              '🪙 $_currentCoins',
+                                              style: const TextStyle(
+                                                color: Colors.amber,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'VT323',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -525,7 +698,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                           mainAxisSpacing: 20, // More spacing between smaller buttons
                                           childAspectRatio: 2.5, // Much higher ratio to make buttons very small and wide
                                           shrinkWrap: true, // Allow grid to take only needed space
-                                          children: ClosetOverlay.availableOutfits.map((outfit) {
+                                          children: _currentOutfits.map((outfit) {
                                             return _buildOutfitButton(outfit);
                                           }).toList(),
                                         ),
@@ -570,7 +743,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                             _closeOverlay();
                                           } else {
                                             // Check if selected outfit is unlocked
-                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                            final selectedOutfitConfig = _currentOutfits.firstWhere(
                                               (outfit) => outfit.spriteFileName == selectedOutfit,
                                             );
                                             final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
@@ -582,7 +755,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: () {
                                             if (selectedOutfit == widget.currentOutfit) return Colors.grey;
-                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                            final selectedOutfitConfig = _currentOutfits.firstWhere(
                                               (outfit) => outfit.spriteFileName == selectedOutfit,
                                             );
                                             final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);
@@ -600,7 +773,7 @@ class _ClosetOverlayState extends State<ClosetOverlay> with TickerProviderStateM
                                         child: Text(
                                           () {
                                             if (selectedOutfit == widget.currentOutfit) return 'CLOSE';
-                                            final selectedOutfitConfig = ClosetOverlay.availableOutfits.firstWhere(
+                                            final selectedOutfitConfig = _currentOutfits.firstWhere(
                                               (outfit) => outfit.spriteFileName == selectedOutfit,
                                             );
                                             final isUnlocked = selectedOutfitConfig.isDefault || _unlockedOutfits.contains(selectedOutfit);

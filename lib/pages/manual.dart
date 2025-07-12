@@ -9,6 +9,55 @@ final Color charcoalBlack = Color.fromRGBO(27, 27, 27, 1.0);
 final Color ashMaroon = Color.fromRGBO(110, 14, 21, 1.0);
 final Color fineRed = Color.fromRGBO(201, 33, 30, 1.0);
 
+class FlipCard extends StatefulWidget {
+  final String question;
+  final String answer;
+
+  const FlipCard({
+    Key? key,
+    required this.question,
+    required this.answer,
+  }) : super(key: key);
+
+  @override
+  State<FlipCard> createState() => _FlipCardState();
+}
+
+class _FlipCardState extends State<FlipCard> {
+  bool isFlipped = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isFlipped = !isFlipped;
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: championWhite,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: ashMaroon, width: 2),
+        ),
+        padding: EdgeInsets.all(16),
+        child: Center(
+          child: Text(
+            isFlipped ? widget.answer : widget.question,
+            style: TextStyle(
+              fontFamily: 'PixeloidSans',
+              fontSize: 16,
+              color: ashMaroon,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class Manual extends StatefulWidget {
   const Manual({super.key});
 
@@ -144,6 +193,122 @@ class _ManualState extends State<Manual> {
                     )
                     .toList(),
               ),
+              Container(
+                margin: EdgeInsets.only(top: 50, bottom: 30),
+                child: Column(
+                  children: [
+                    Text(
+                      "TEST YOUR KNOWLEDGE",
+                      style: TextStyle(
+                        fontFamily: 'PixeloidSans-Bold',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        color: championWhite,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      height: 200,
+                      child: PageView.builder(
+                        itemCount: 20,
+                        itemBuilder: (context, index) {
+                          final questions = [
+                            {
+                              'question': 'What was the former name of BatStateU Lipa Campus?',
+                              'answer': 'Don Claro M. Recto Campus'
+                            },
+                            {
+                              'question': 'Approximately how many students are enrolled at the Lipa Campus?',
+                              'answer': '5,000+ students'
+                            },
+                            {
+                              'question': 'What college focuses on artificial intelligence and cybersecurity?',
+                              'answer': 'College of Informatics and Computing Sciences'
+                            },
+                            {
+                              'question': 'Which college is the oldest in BatStateU?',
+                              'answer': 'College of Engineering Technology (formerly College of Industrial Technology)'
+                            },
+                            {
+                              'question': 'What does TechIS stand for?',
+                              'answer': 'Tech Innovators Society'
+                            },
+                            {
+                              'question': 'What does AITS stand for?',
+                              'answer': 'Alliance of Industrial Technology Students'
+                            },
+                            {
+                              'question': 'What is the official student government?',
+                              'answer': 'SSC (Student Supreme Council)'
+                            },
+                            {
+                              'question': 'Which org belongs to Psychology majors?',
+                              'answer': 'COPS (Community of Psychology Students)'
+                            },
+                            {
+                              'question': 'University Vision excerpt: "develops _____ in the global knowledge economy"',
+                              'answer': 'leaders'
+                            },
+                            {
+                              'question': 'Mission excerpt: "_____ century learning environment"',
+                              'answer': '21st'
+                            },
+                            {
+                              'question': 'Mission excerpt: "through _____ research"',
+                              'answer': 'multidisciplinary'
+                            },
+                            {
+                              'question': 'Hymn: "Your honor we _____"',
+                              'answer': 'proclaim'
+                            },
+                            {
+                              'question': 'Hymn: "_____ of leaders"',
+                              'answer': 'molder'
+                            },
+                            {
+                              'question': 'Hymn: "_____ of vision"',
+                              'answer': 'achiever'
+                            },
+                            {
+                              'question': 'Hymn: "with dignity and _____"',
+                              'answer': 'pride'
+                            },
+                            {
+                              'question': 'Hymn final: "\'til _____!"',
+                              'answer': 'eternity'
+                            },
+                            {
+                              'question': 'Which org belongs to Business Administration?',
+                              'answer': 'JME (Junior Marketing Executives)'
+                            },
+                            {
+                              'question': 'CICS student organization?',
+                              'answer': 'JPCS (Junior Philippine Computer Society)'
+                            },
+                            {
+                              'question': 'Teacher Education organization?',
+                              'answer': 'AFEG (Association of Future Educators Guild)'
+                            },
+                            {
+                              'question': 'Arts and Sciences student org?',
+                              'answer': 'PCS (Philippine Chemical Society)'
+                            },
+                          ];
+                          
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: FlipCard(
+                              question: questions[index]['question']!,
+                              answer: questions[index]['answer']!,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            
             ],
           ),
         ),

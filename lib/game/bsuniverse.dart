@@ -34,6 +34,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/input.dart';
+import 'package:flame/events.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,127 @@ import 'dart:math' as math;
 
 // Color scheme
 final Color pixelGold = Color.fromRGBO(255, 215, 0, 1.0);
+
+/// Custom Menu Button Component matching the mute button and SpartaCoins styling
+class MenuButtonComponent extends PositionComponent with HasGameReference, TapCallbacks {
+  late final TextComponent _menuIcon;
+  bool _isPressed = false;
+  
+  final Color _buttonColor = Colors.black54;
+  final Color _borderColor = Colors.white;
+  final Color _iconColor = Colors.white;
+  final double _borderWidth = 2.0;
+  
+  VoidCallback? onPressed;
+
+  MenuButtonComponent({
+    Vector2? position,
+    Vector2? size,
+    this.onPressed,
+  }) : super(
+          position: position ?? Vector2.zero(),
+          size: size ?? Vector2.all(50),
+        ) {
+    anchor = Anchor.center;
+  }
+
+  @override
+  Future<void> onLoad() async {
+    // Create rectangular background using RectangleComponent
+    final background = RectangleComponent(
+      size: size,
+      paint: Paint()
+        ..color = _buttonColor
+        ..style = PaintingStyle.fill,
+      anchor: Anchor.center,
+      position: size / 2,
+    );
+    
+    // Create border
+    final border = RectangleComponent(
+      size: size,
+      paint: Paint()
+        ..color = _borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = _borderWidth,
+      anchor: Anchor.center,
+      position: size / 2,
+    );
+    
+    add(background);
+    add(border);
+    
+    // Create menu icon (hamburger menu)
+    _menuIcon = TextComponent(
+      text: '☰',
+      textRenderer: TextPaint(
+        style: TextStyle(
+          color: _iconColor,
+          fontSize: size.x * 0.5,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      anchor: Anchor.center,
+      position: size / 2,
+    );
+    
+    add(_menuIcon);
+  }
+
+  @override
+  bool onTapDown(TapDownEvent event) {
+    _isPressed = true;
+    _updateVisuals();
+    return true;
+  }
+
+  @override
+  bool onTapUp(TapUpEvent event) {
+    if (_isPressed) {
+      _isPressed = false;
+      _updateVisuals();
+      onPressed?.call();
+    }
+    return true;
+  }
+
+  @override
+  bool onTapCancel(TapCancelEvent event) {
+    _isPressed = false;
+    _updateVisuals();
+    return true;
+  }
+
+  void _updateVisuals() {
+    // Add visual feedback when pressed (optional - could make it slightly darker)
+    if (_isPressed) {
+      _menuIcon.textRenderer = TextPaint(
+        style: TextStyle(
+          color: _iconColor.withOpacity(0.7),
+          fontSize: size.x * 0.5,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    } else {
+      _menuIcon.textRenderer = TextPaint(
+        style: TextStyle(
+          color: _iconColor,
+          fontSize: size.x * 0.5,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
+  }
+
+  // Static method to get position for top-left corner
+  static Vector2 getTopLeftPosition(Vector2 canvasSize, Vector2 buttonSize) {
+    final margin = 20.0;
+    return Vector2(
+      margin + buttonSize.x / 2,
+      margin + buttonSize.y / 2,
+    );
+  }
+}
 
 // Scene Configuration
 final Map<String, Map<String, dynamic>> tmxConfig = {
@@ -236,7 +358,7 @@ class BSUniverseGame extends FlameGame
   late final StatusButtonComponent buttonB;
   late final StatusButtonComponent buttonC;
   late final StatusButtonComponent buttonD;
-  late final StatusButtonComponent menuButton;
+  late final MenuButtonComponent menuButton;
   late final MuteButtonComponent muteButton;
   
   // SpartaCoins system
@@ -321,16 +443,12 @@ class BSUniverseGame extends FlameGame
       buttonD.onDragUpdateCallback = player.handleDButtonDrag;
       buttonD.onDragEndCallback = player.handleDButtonRelease;
 
-      // Create menu button
-      menuButton = StatusButtonComponent(
-        label: '☰',
-        color: pixelGold,
-        status: true,
-        cooldownMs: 500,
+      // Create menu button with consistent styling
+      menuButton = MenuButtonComponent(
         size: Vector2.all(50),
-        position: Vector2(canvasSize.x - 60, 60), // Top right, below mute button
+        position: Vector2(30, 30), // Top left corner
+        onPressed: showMenuScreen,
       );
-      menuButton.onPressed = (_) => showMenuScreen();
 
       // Create mute button
       final muteButtonSize = Vector2.all(50);
@@ -345,11 +463,11 @@ class BSUniverseGame extends FlameGame
       // Initialize SpartaCoins with 10 initial coins
       spartaCoins = SpartaCoinsComponent(initialCoins: 10);
 
+      // // player.debugMode = true;
+      // player.debugColor = Colors.white;
       // player.debugMode = true;
-      player.debugColor = Colors.white;
-      player.debugMode = true;
 
-      debugMode = true;
+      // debugMode = true;
       await changeScene(GoTo.bedroom, Vector2(104, 66));
 
       // Add UI components
@@ -438,7 +556,7 @@ class BSUniverseGame extends FlameGame
     buttonD.position = StatusButtonComponent.getButtonPosition(canvasSize, 3);
 
     // Update menu button position
-    menuButton.position = Vector2(canvasSize.x - 60, 60);
+    menuButton.position = MenuButtonComponent.getTopLeftPosition(canvasSize, Vector2.all(50));
 
     // Update mute button position
     final muteButtonSize = Vector2.all(50);
@@ -729,7 +847,7 @@ class Portal extends RectangleComponent
     required this.destination,
     required this.startingPosition,
     required this.selection,
-  }) : super(paint: Paint()..color = const Color.fromARGB(255, 0, 0, 0));
+  }) : super(paint: Paint()..color = const Color.fromARGB(0, 255, 255, 255));
 
   @override
   Future<void> onLoad() async {

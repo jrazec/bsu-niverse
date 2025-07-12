@@ -689,7 +689,7 @@ class _MenuScreenOverlayState extends State<MenuScreenOverlay>
     // Pause game and show exit confirmation
     widget.game.pauseEngine();
     _closeMenu();
-    Navigator.pushNamed(context, '/home');
+    Navigator.pushNamed(context, '/');
     GameSoundManager().stopBackgroundMusic();
   }
 

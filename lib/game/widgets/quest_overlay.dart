@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:bsuniverse/game/sound_manager.dart';
 import 'dart:ui' as ui;
 import 'dart:math' as math;
 
@@ -579,6 +580,9 @@ class _QuestOverlayState extends State<QuestOverlay> with TickerProviderStateMix
     
     if (isCorrect) {
       // Correct answer - increment counter and show sparkles
+      // Play correct answer sound effect
+      GameSoundManager().playQuestCorrectAnswerSound();
+      
       // Batch state updates and start animations immediately to reduce rebuilds
       correctAnswers++;
       _sparkleVisibilityNotifier.value = true;
@@ -592,6 +596,9 @@ class _QuestOverlayState extends State<QuestOverlay> with TickerProviderStateMix
       });
     } else {
       // Wrong answer - lose a heart, show anger/sweat animations
+      // Play wrong answer sound effect
+      GameSoundManager().playQuestWrongAnswerSound();
+      
       setState(() {
         breakingHeartIndex = hearts - 1; // Set which heart is breaking (0-based index)
         hearts--;
@@ -637,9 +644,14 @@ class _QuestOverlayState extends State<QuestOverlay> with TickerProviderStateMix
       // Quest failed - no hearts left
       isQuestComplete = true;
       coinsEarned = _failurePenalty;
+      // Play quest failed sound effect
+      GameSoundManager().playQuestFailedSound();
     } else if (currentQuestionIndex >= widget.questions.length - 1) {
       // Last question completed with hearts remaining
       isQuestComplete = true;
+      // Play quest complete sound effect
+      GameSoundManager().playQuestCompleteSound();
+      
       // Calculate coin reward based on hearts remaining
       switch (hearts) {
         case 3:
