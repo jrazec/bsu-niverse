@@ -84,8 +84,9 @@ class _QuestDialogueOverlayState extends State<QuestDialogueOverlay>
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final dialogueHeight = screenSize.height * 0.25; // Bottom 25% of screen
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isLandscape = screenWidth > screenHeight;
 
     return Material(
       color: Colors.transparent,
@@ -106,14 +107,13 @@ class _QuestDialogueOverlayState extends State<QuestDialogueOverlay>
             child: SlideTransition(
               position: _slideAnimation,
               child: Container(
-                height: dialogueHeight,
+                constraints: BoxConstraints(
+                  maxHeight: isLandscape ? screenHeight * 0.65 : screenHeight * 0.55,
+                ),
                 decoration: BoxDecoration(
                   color: championWhite,
                   border: Border.all(color: charcoalBlack, width: 4),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
+                  borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
                       color: charcoalBlack.withOpacity(0.5),
@@ -123,6 +123,7 @@ class _QuestDialogueOverlayState extends State<QuestDialogueOverlay>
                   ],
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Quest title bar
                     Container(
@@ -131,8 +132,8 @@ class _QuestDialogueOverlayState extends State<QuestDialogueOverlay>
                       decoration: BoxDecoration(
                         color: ashMaroon,
                         borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
+                          topLeft: Radius.circular(8),
+                          topRight: Radius.circular(8),
                         ),
                       ),
                       child: Row(
@@ -174,123 +175,131 @@ class _QuestDialogueOverlayState extends State<QuestDialogueOverlay>
                       ),
                     ),
 
-                    // Dialogue content
+                    // Scrollable content area
                     Expanded(
-                      child: Padding(
+                      child: SingleChildScrollView(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // NPC dialogue
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Location info
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: pixelGold.withOpacity(0.3),
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(color: pixelGold, width: 1),
-                                      ),
-                                      child: Text(
-                                        widget.questConfig.location,
-                                        style: TextStyle(
-                                          fontFamily: 'PixeloidSans',
-                                          fontSize: 12,
-                                          color: charcoalBlack,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-
-                                    // Main dialogue text
-                                    Text(
-                                      widget.questConfig.dialogue,
-                                      style: TextStyle(
-                                        fontFamily: 'VT323',
-                                        fontSize: 16,
-                                        color: charcoalBlack,
-                                        height: 1.3,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-
-                                    // Quest description
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(6),
-                                        border: Border.all(color: Colors.grey[300]!, width: 1),
-                                      ),
-                                      child: Text(
-                                        widget.questConfig.questDescription,
-                                        style: TextStyle(
-                                          fontFamily: 'PixeloidSans',
-                                          fontSize: 14,
-                                          color: charcoalBlack,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                            // Location info
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: pixelGold.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: pixelGold, width: 1),
+                              ),
+                              child: Text(
+                                widget.questConfig.location,
+                                style: TextStyle(
+                                  fontFamily: 'PixeloidSans',
+                                  fontSize: 12,
+                                  color: charcoalBlack,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 12),
 
-                            // Choice buttons
-                            if (_showChoices) ...[
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  // Coin reward info
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: pixelGold.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        'Reward: +${widget.questConfig.coinsReward} coins',
-                                        style: TextStyle(
-                                          fontFamily: 'PixeloidSans',
-                                          fontSize: 12,
-                                          color: charcoalBlack,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
+                            // Main dialogue text
+                            Text(
+                              widget.questConfig.dialogue,
+                              style: TextStyle(
+                                fontFamily: 'VT323',
+                                fontSize: 16,
+                                color: charcoalBlack,
+                                height: 1.3,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
 
-                                  // Decline button
-                                  _buildChoiceButton(
+                            // Quest description
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: Colors.grey[300]!, width: 1),
+                              ),
+                              child: Text(
+                                widget.questConfig.questDescription,
+                                style: TextStyle(
+                                  fontFamily: 'PixeloidSans',
+                                  fontSize: 14,
+                                  color: charcoalBlack,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Fixed bottom section with choices
+                    if (_showChoices)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          border: Border(
+                            top: BorderSide(color: Colors.grey[300]!, width: 1),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Coin reward info
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: pixelGold.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: pixelGold, width: 1),
+                              ),
+                              child: Text(
+                                'Reward: +${widget.questConfig.coinsReward} coins',
+                                style: TextStyle(
+                                  fontFamily: 'PixeloidSans',
+                                  fontSize: 12,
+                                  color: charcoalBlack,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+
+                            // Action buttons row
+                            Row(
+                              children: [
+                                // Decline button
+                                Expanded(
+                                  child: _buildChoiceButton(
                                     'DECLINE',
                                     onPressed: _onDecline,
                                     backgroundColor: Colors.grey[400]!,
                                     textColor: charcoalBlack,
                                   ),
-                                  const SizedBox(width: 12),
+                                ),
+                                const SizedBox(width: 12),
 
-                                  // Accept button
-                                  _buildChoiceButton(
+                                // Accept button
+                                Expanded(
+                                  child: _buildChoiceButton(
                                     'ACCEPT',
                                     onPressed: _onAccept,
                                     backgroundColor: ashMaroon,
                                     textColor: championWhite,
                                   ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
