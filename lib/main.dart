@@ -1,17 +1,17 @@
-import 'screens/game_screen.dart';
-import 'package:flutter/material.dart';
-import 'pages/home.dart';
-import 'pages/leaderboards.dart';
-import 'pages/manual.dart';
-import 'pages/settings.dart';
-import '../widgets/game_title.dart';
-import '../widgets/loading_screen.dart';
-
+import 'package:bsuniverse/facilities/screens/facilities_screen.dart';
+import 'package:bsuniverse/pages/home.dart';
+import 'package:bsuniverse/pages/leaderboards.dart';
+import 'package:bsuniverse/pages/manual.dart';
+import 'package:bsuniverse/pages/settings.dart';
+import 'package:bsuniverse/screens/game_screen.dart';
+import 'package:bsuniverse/widgets/game_title.dart';
+import 'package:bsuniverse/widgets/loading_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+
 import 'firebase_options.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -19,12 +19,12 @@ void main() async{
   runApp(const MyApp());
 }
 
-final Color championWhite = Color.fromRGBO(250, 249, 246, 1.0);
-final Color pixelGold = Color.fromRGBO(255, 215, 0, 1.0);
-final Color lavanderGray = Color.fromRGBO(197, 197, 214, 1.0);
-final Color blazingOrange = Color.fromRGBO(255, 106, 0, 1.0);
-final Color charcoalBlack = Color.fromRGBO(27, 27, 27, 1.0);
-final Color ashMaroon = Color.fromRGBO(110, 14, 21, 1.0);
+final Color championWhite = const Color.fromRGBO(250, 249, 246, 1.0);
+final Color pixelGold = const Color.fromRGBO(255, 215, 0, 1.0);
+final Color lavanderGray = const Color.fromRGBO(197, 197, 214, 1.0);
+final Color blazingOrange = const Color.fromRGBO(255, 106, 0, 1.0);
+final Color charcoalBlack = const Color.fromRGBO(27, 27, 27, 1.0);
+final Color ashMaroon = const Color.fromRGBO(110, 14, 21, 1.0);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -44,12 +44,13 @@ class MyApp extends StatelessWidget {
       ),
       home: const MyHomePage(title: 'Home Page'),
       routes: {
-        '/home' : (context) =>Home(),
-        '/user-manual' : (context) => Manual(),
-        '/leaderboards' : (context) => Leaderboards(),
-        '/settings' : (context) => Settings(),
-        '/loading' : (context) => SpartanLoadingScreen(),
-        '/game' : (context) => GameScreen()
+        '/home': (context) => const Home(),
+        '/user-manual': (context) => const Manual(),
+        '/leaderboards': (context) => const Leaderboards(),
+        '/settings': (context) => const Settings(),
+        '/loading': (context) => const SpartanLoadingScreen(),
+        '/game': (context) => const GameScreen(),
+        '/facilities': (context) => FacilitiesScreen(),
       },
     );
   }
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
+
   final String title;
 
   @override
@@ -66,14 +68,19 @@ class MyHomePage extends StatefulWidget {
 // Any identifier (variable, method, or class) that starts with _
 // is accessible only within the same Dart file.
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Widget> _sections = [Home(), Manual(), Leaderboards(), Settings()];
+  final List<Widget> _sections = [
+    const Home(),
+    const Manual(),
+    const Leaderboards(),
+    FacilitiesScreen(),
+    const Settings()
+  ];
   int _selectedNav = 0;
 
   void _changeNav(currentNav) {
     setState(() {
       _selectedNav = currentNav;
     });
-    
   }
 
   @override
@@ -93,19 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         title: GameTitle(
-          fontSizeInput: 22,
-          fontWeightInput: FontWeight.w400,
-          colorInput: championWhite
-        ),
+            fontSizeInput: 22,
+            fontWeightInput: FontWeight.w400,
+            colorInput: championWhite),
         centerTitle: false,
         elevation: 4,
         shadowColor: Colors.black54,
       ),
-
-      
       body: _sections[_selectedNav],
-
-
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: ashMaroon,
         currentIndex: _selectedNav,
@@ -113,20 +115,17 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedItemColor: pixelGold,
         unselectedItemColor: championWhite,
         showUnselectedLabels: false,
-        selectedLabelStyle: TextStyle(
-          fontFamily: 'PixeloidSans',
-          fontSize: 13
-        ),
+        selectedLabelStyle: const TextStyle(fontFamily: 'PixeloidSans', fontSize: 13),
         onTap: _changeNav,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(size: 30, Icons.home_outlined),
             label: 'Home',
             activeIcon: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
+              padding: EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
-                child: Container(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     boxShadow: [
@@ -146,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(size: 30, Icons.book_outlined),
             label: 'Manual',
             activeIcon: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
+              padding: EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
                 child: Icon(Icons.book, size: 35),
@@ -157,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(size: 30, Icons.leaderboard_outlined),
             label: 'Leaderboards',
             activeIcon: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
+              padding: EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.center,
                 child: Icon(Icons.leaderboard, size: 35),
@@ -165,10 +164,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           BottomNavigationBarItem(
+            icon: Icon(size: 30, Icons.business_outlined),
+            label: 'Facilities',
+            activeIcon: Padding(
+              padding: EdgeInsets.only(top: 6.0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Icon(Icons.business, size: 35),
+              ),
+            ),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(size: 30, Icons.settings_outlined),
             label: 'Settings',
             activeIcon: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
+              padding: EdgeInsets.only(top: 6.0),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Icon(Icons.settings, size: 35),
