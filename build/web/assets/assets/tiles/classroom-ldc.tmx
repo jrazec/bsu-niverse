@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="13" height="9" tilewidth="32" tileheight="32" infinite="0" nextlayerid="11" nextobjectid="45">
+ <tileset firstgid="1" source="cecsClassroom.tsx"/>
+ <tileset firstgid="46" source="test.tsx"/>
+ <tileset firstgid="47" source="classroom-ldc.tsx"/>
+ <tileset firstgid="92" source="map.tsx"/>
+ <layer id="10" name="back" width="13" height="9">
+  <data encoding="csv">
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212,
+212,212,212,212,212,212,212,212,212,212,212,212,212
+</data>
+ </layer>
+ <layer id="1" name="room" width="13" height="9">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,47,48,49,50,51,52,53,54,55,0,0,
+0,0,56,57,58,59,60,61,62,63,64,0,0,
+0,0,65,66,67,68,69,70,71,72,73,0,0,
+0,0,74,75,76,77,78,79,80,81,82,0,0,
+0,0,83,84,85,86,87,88,89,90,91,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="out">
+  <object id="43" x="316.381" y="218.066" width="28.8291" height="6.65287"/>
+ </objectgroup>
+ <objectgroup id="5" name="in">
+  <object id="42" x="68.0071" y="218.805" width="28.8291" height="6.65287"/>
+ </objectgroup>
+ <group id="6" name="Popups">
+  <objectgroup id="9" name="1st">
+   <object id="31" name="11" gid="46" x="315" y="162.364" width="32" height="32"/>
+   <object id="32" name="10" gid="46" x="315" y="127" width="32" height="32"/>
+   <object id="33" name="9" gid="46" x="287" y="144" width="32" height="32"/>
+   <object id="34" name="8" gid="46" x="255" y="144" width="32" height="32"/>
+   <object id="35" name="7" gid="46" x="223" y="144" width="32" height="32"/>
+   <object id="36" name="6" gid="46" x="192.017" y="144" width="32" height="32"/>
+   <object id="37" name="5" gid="46" x="160.748" y="143.713" width="32" height="32"/>
+   <object id="38" name="4" gid="46" x="127" y="144" width="32" height="32"/>
+   <object id="39" name="3" gid="46" x="95" y="144" width="32" height="32"/>
+   <object id="40" name="2" gid="46" x="66" y="158.364" width="32" height="32"/>
+   <object id="41" name="1" gid="46" x="66" y="123" width="32" height="32"/>
+  </objectgroup>
+ </group>
+ <objectgroup id="8" name="Collisions">
+  <object id="1" x="59.8167" y="226.705" width="298.648" height="29.2955"/>
+  <object id="2" x="64" y="32" width="295.986" height="46.3333"/>
+  <object id="3" x="355.465" y="32" width="28.5349" height="224"/>
+  <object id="4" x="32" y="32" width="29.9364" height="224"/>
+  <object id="5" x="111" y="96" width="0.5" height="13.3636"/>
+  <object id="6" x="141.68" y="96" width="0.5" height="13.3636"/>
+  <object id="7" x="176" y="96" width="0.5" height="13.3636"/>
+  <object id="8" x="210.641" y="96" width="0.5" height="13.3636"/>
+  <object id="9" x="239" y="96" width="0.5" height="13.3636"/>
+  <object id="10" x="271" y="96" width="0.5" height="13.3636"/>
+  <object id="11" x="303" y="96" width="0.5" height="13.3636"/>
+  <object id="12" x="350.324" y="102.227" width="4.54545" height="83.9091"/>
+  <object id="13" x="111.227" y="170.568" width="0.5" height="40"/>
+  <object id="14" x="143.227" y="170.568" width="0.5" height="40"/>
+  <object id="15" x="175.227" y="170.568" width="0.5" height="40"/>
+  <object id="16" x="208.227" y="170.568" width="0.5" height="40"/>
+  <object id="17" x="239.227" y="170.568" width="0.5" height="40"/>
+  <object id="18" x="271.227" y="170.568" width="0.5" height="40"/>
+  <object id="19" x="303.227" y="170.568" width="0.5" height="40"/>
+ </objectgroup>
+</map>
